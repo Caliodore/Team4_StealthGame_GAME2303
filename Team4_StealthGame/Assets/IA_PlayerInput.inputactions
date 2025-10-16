@@ -113,12 +113,73 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Testing",
+            "id": "4ebc7cd6-9c6c-49df-b0a1-2d9d590f8396",
+            "actions": [
+                {
+                    "name": "RemoteStateChange",
+                    "type": "PassThrough",
+                    "id": "c269526b-bdf3-4f30-8fb7-ad8d7e503221",
+                    "expectedControlType": "Key",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "76b98b9e-c766-4936-b14c-8f94d0ca0bc6",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Debug",
+                    "action": "RemoteStateChange",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0ebad8fe-c7b2-44c7-8a30-ff1b149858f0",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Debug",
+                    "action": "RemoteStateChange",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "01769543-5775-411d-9ca6-df1b1a16be9d",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Debug",
+                    "action": "RemoteStateChange",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
         {
             "name": "Gaming",
             "bindingGroup": "Gaming",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Debug",
+            "bindingGroup": "Debug",
             "devices": [
                 {
                     "devicePath": "<Keyboard>",

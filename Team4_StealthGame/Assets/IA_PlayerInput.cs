@@ -199,12 +199,73 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Testing"",
+            ""id"": ""4ebc7cd6-9c6c-49df-b0a1-2d9d590f8396"",
+            ""actions"": [
+                {
+                    ""name"": ""RemoteStateChange"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""c269526b-bdf3-4f30-8fb7-ad8d7e503221"",
+                    ""expectedControlType"": ""Key"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""76b98b9e-c766-4936-b14c-8f94d0ca0bc6"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Debug"",
+                    ""action"": ""RemoteStateChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0ebad8fe-c7b2-44c7-8a30-ff1b149858f0"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Debug"",
+                    ""action"": ""RemoteStateChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01769543-5775-411d-9ca6-df1b1a16be9d"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Debug"",
+                    ""action"": ""RemoteStateChange"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
         {
             ""name"": ""Gaming"",
             ""bindingGroup"": ""Gaming"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""bindingGroup"": ""Debug"",
             ""devices"": [
                 {
                     ""devicePath"": ""<Keyboard>"",
@@ -220,11 +281,15 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         m_KBM_Movement = m_KBM.FindAction("Movement", throwIfNotFound: true);
         m_KBM_Sneak = m_KBM.FindAction("Sneak", throwIfNotFound: true);
         m_KBM_Sprint = m_KBM.FindAction("Sprint", throwIfNotFound: true);
+        // Testing
+        m_Testing = asset.FindActionMap("Testing", throwIfNotFound: true);
+        m_Testing_RemoteStateChange = m_Testing.FindAction("RemoteStateChange", throwIfNotFound: true);
     }
 
     ~@IA_PlayerInput()
     {
         UnityEngine.Debug.Assert(!m_KBM.enabled, "This will cause a leak and performance issues, IA_PlayerInput.KBM.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Testing.enabled, "This will cause a leak and performance issues, IA_PlayerInput.Testing.Disable() has not been called.");
     }
 
     /// <summary>
@@ -414,6 +479,102 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="KBMActions" /> instance referencing this action map.
     /// </summary>
     public KBMActions @KBM => new KBMActions(this);
+
+    // Testing
+    private readonly InputActionMap m_Testing;
+    private List<ITestingActions> m_TestingActionsCallbackInterfaces = new List<ITestingActions>();
+    private readonly InputAction m_Testing_RemoteStateChange;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Testing".
+    /// </summary>
+    public struct TestingActions
+    {
+        private @IA_PlayerInput m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public TestingActions(@IA_PlayerInput wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Testing/RemoteStateChange".
+        /// </summary>
+        public InputAction @RemoteStateChange => m_Wrapper.m_Testing_RemoteStateChange;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Testing; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="TestingActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(TestingActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="TestingActions" />
+        public void AddCallbacks(ITestingActions instance)
+        {
+            if (instance == null || m_Wrapper.m_TestingActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_TestingActionsCallbackInterfaces.Add(instance);
+            @RemoteStateChange.started += instance.OnRemoteStateChange;
+            @RemoteStateChange.performed += instance.OnRemoteStateChange;
+            @RemoteStateChange.canceled += instance.OnRemoteStateChange;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="TestingActions" />
+        private void UnregisterCallbacks(ITestingActions instance)
+        {
+            @RemoteStateChange.started -= instance.OnRemoteStateChange;
+            @RemoteStateChange.performed -= instance.OnRemoteStateChange;
+            @RemoteStateChange.canceled -= instance.OnRemoteStateChange;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="TestingActions.UnregisterCallbacks(ITestingActions)" />.
+        /// </summary>
+        /// <seealso cref="TestingActions.UnregisterCallbacks(ITestingActions)" />
+        public void RemoveCallbacks(ITestingActions instance)
+        {
+            if (m_Wrapper.m_TestingActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="TestingActions.AddCallbacks(ITestingActions)" />
+        /// <seealso cref="TestingActions.RemoveCallbacks(ITestingActions)" />
+        /// <seealso cref="TestingActions.UnregisterCallbacks(ITestingActions)" />
+        public void SetCallbacks(ITestingActions instance)
+        {
+            foreach (var item in m_Wrapper.m_TestingActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_TestingActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="TestingActions" /> instance referencing this action map.
+    /// </summary>
+    public TestingActions @Testing => new TestingActions(this);
     private int m_GamingSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -425,6 +586,19 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         {
             if (m_GamingSchemeIndex == -1) m_GamingSchemeIndex = asset.FindControlSchemeIndex("Gaming");
             return asset.controlSchemes[m_GamingSchemeIndex];
+        }
+    }
+    private int m_DebugSchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme DebugScheme
+    {
+        get
+        {
+            if (m_DebugSchemeIndex == -1) m_DebugSchemeIndex = asset.FindControlSchemeIndex("Debug");
+            return asset.controlSchemes[m_DebugSchemeIndex];
         }
     }
     /// <summary>
@@ -455,5 +629,20 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSprint(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Testing" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="TestingActions.AddCallbacks(ITestingActions)" />
+    /// <seealso cref="TestingActions.RemoveCallbacks(ITestingActions)" />
+    public interface ITestingActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "RemoteStateChange" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRemoteStateChange(InputAction.CallbackContext context);
     }
 }
