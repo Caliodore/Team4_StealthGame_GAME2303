@@ -221,6 +221,15 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AddPlayersInScene"",
+                    ""type"": ""Button"",
+                    ""id"": ""ed8e2aa9-29e9-4921-82a4-f6ee563d6a32"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -243,6 +252,17 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Debug"",
                     ""action"": ""SetOpen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d74995b7-19d9-4c8f-b692-5adfccf61d39"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Debug"",
+                    ""action"": ""AddPlayersInScene"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -283,6 +303,7 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         m_Testing = asset.FindActionMap("Testing", throwIfNotFound: true);
         m_Testing_CycleState = m_Testing.FindAction("CycleState", throwIfNotFound: true);
         m_Testing_SetOpen = m_Testing.FindAction("SetOpen", throwIfNotFound: true);
+        m_Testing_AddPlayersInScene = m_Testing.FindAction("AddPlayersInScene", throwIfNotFound: true);
     }
 
     ~@IA_PlayerInput()
@@ -484,6 +505,7 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
     private List<ITestingActions> m_TestingActionsCallbackInterfaces = new List<ITestingActions>();
     private readonly InputAction m_Testing_CycleState;
     private readonly InputAction m_Testing_SetOpen;
+    private readonly InputAction m_Testing_AddPlayersInScene;
     /// <summary>
     /// Provides access to input actions defined in input action map "Testing".
     /// </summary>
@@ -503,6 +525,10 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Testing/SetOpen".
         /// </summary>
         public InputAction @SetOpen => m_Wrapper.m_Testing_SetOpen;
+        /// <summary>
+        /// Provides access to the underlying input action "Testing/AddPlayersInScene".
+        /// </summary>
+        public InputAction @AddPlayersInScene => m_Wrapper.m_Testing_AddPlayersInScene;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -535,6 +561,9 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
             @SetOpen.started += instance.OnSetOpen;
             @SetOpen.performed += instance.OnSetOpen;
             @SetOpen.canceled += instance.OnSetOpen;
+            @AddPlayersInScene.started += instance.OnAddPlayersInScene;
+            @AddPlayersInScene.performed += instance.OnAddPlayersInScene;
+            @AddPlayersInScene.canceled += instance.OnAddPlayersInScene;
         }
 
         /// <summary>
@@ -552,6 +581,9 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
             @SetOpen.started -= instance.OnSetOpen;
             @SetOpen.performed -= instance.OnSetOpen;
             @SetOpen.canceled -= instance.OnSetOpen;
+            @AddPlayersInScene.started -= instance.OnAddPlayersInScene;
+            @AddPlayersInScene.performed -= instance.OnAddPlayersInScene;
+            @AddPlayersInScene.canceled -= instance.OnAddPlayersInScene;
         }
 
         /// <summary>
@@ -661,5 +693,12 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSetOpen(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AddPlayersInScene" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAddPlayersInScene(InputAction.CallbackContext context);
     }
 }

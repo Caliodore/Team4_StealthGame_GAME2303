@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static Door;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 //namespace Manager
 //{ 
@@ -42,7 +43,8 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        GenerateCollections();
+        //GenerateCollections();
+        playerObjTransColl = new Dictionary<GameObject, Transform>();
     }
 
     private void GenerateCollections()
@@ -117,18 +119,25 @@ public class LevelManager : MonoBehaviour
     /// <param name="addingPlayer"> True = Added || False = Removed </param>
     public void PlayerCollectionUpdate(GameObject playerChanged, bool addingPlayer)
     { 
+        bool dictCheck;
         if(!playerChanged.CompareTag("Player"))
         { 
             print("Object reference does not have the Player tag, this method is only for use with objects with the Player tag.");
             return;
         }
 
-        bool dictCheck = playerObjTransColl.ContainsKey(playerChanged);
+        if(playerObjTransColl.Count > 0)
+        {
+            dictCheck = playerObjTransColl.ContainsKey(playerChanged);
+        }
+        else
+            dictCheck = false;
+        
         if(!dictCheck)          //Object reference not found in keys, i.e. the player object hasn't been noted yet in the dictionary.
         { 
             if(addingPlayer)    //Since ref is not in dictionary yet, if true we want to add it!
             { 
-                playerObjTransColl.Add(playerChanged, playerChanged.GetComponent<Transform>());    
+                playerObjTransColl.Add(playerChanged, playerChanged.GetComponent<Transform>());
             }
             else                //Ref is not in dictionary and is not supposed to be added, therefore this is an error most likely.
             {
@@ -144,11 +153,24 @@ public class LevelManager : MonoBehaviour
             print("PlayerObjRef is already in dictionary. If attempting to remove try inverting addingPlayer, your input bool.");
         }
 
-        print($"There are {playerObjTransColl.Keys} PlayerGameObjectRefs and {playerObjTransColl.Values} PlayerTransformRefs recorded.");
+        print($"There are {playerObjTransColl.Keys.Count} PlayerGameObjectRefs and {playerObjTransColl.Values.Count} PlayerTransformRefs recorded.");
 
         if(!addingPlayer && playerObjTransColl.ContainsKey(playerChanged))
         { 
             print("There are still transforms associated with this GameObject. Cali needs to troubleshoot PlayerCollectionUpdate in this case.");
+        }
+    }
+
+    public void AddPlayerRemoteTest(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started)
+        {
+            print("Attempting to find playerRef in scene and add to dictionary.");
+            GameObject playerRef = GameObject.FindGameObjectWithTag("Player");
+            if (playerRef != null)
+                PlayerCollectionUpdate(playerRef, true);
+            else
+                print("Could not find an object with the tag 'Player'.");
         }
     }
 }

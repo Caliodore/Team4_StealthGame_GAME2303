@@ -135,6 +135,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "AddPlayersInScene",
+                    "type": "Button",
+                    "id": "ed8e2aa9-29e9-4921-82a4-f6ee563d6a32",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -157,6 +166,17 @@
                     "processors": "",
                     "groups": ";Debug",
                     "action": "SetOpen",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d74995b7-19d9-4c8f-b692-5adfccf61d39",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Debug",
+                    "action": "AddPlayersInScene",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

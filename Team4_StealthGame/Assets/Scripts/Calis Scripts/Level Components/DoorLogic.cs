@@ -37,6 +37,11 @@ public struct DoorBools
         this.isInteractable = isInteractable;
         this.blocksGuardPathing = blocksGuardPathing;
     }
+
+    public override string ToString()
+    {
+        return new string($"{collisionEnabled.ToString()},{isSuspicious.ToString()},{isInteractable.ToString()},{blocksGuardPathing.ToString()}");
+    }
 }
 
 public class DoorLogic : Door
@@ -123,7 +128,7 @@ public class DoorLogic : Door
             int stateInt = (int)currentDoorState;
             stateInt++;
             stateInt%=5;
-            ChangeDoorState(currentDoorState);
+            ChangeDoorState((DoorType)stateInt);
         }
     }
 
