@@ -111,7 +111,7 @@ public class DoorLogic : Door
                 Destroy(gameObject);
                 break;                  //CAN be walked through, IS suspicious, can NOT be interacted with, guards WILL path through.
         }
-        print(doorInteractivity);
+        print(doorInteractivity.ToString());
         //Then update components/interactivity flags based on the vars changed.
         
     }
@@ -119,7 +119,12 @@ public class DoorLogic : Door
     public void RemoteStateChange(InputAction.CallbackContext ctx)
     {
         if(ctx.started)
-            ChangeDoorState(currentDoorState++);    
+        {
+            int stateInt = (int)currentDoorState;
+            stateInt++;
+            stateInt%=5;
+            ChangeDoorState(currentDoorState);
+        }
     }
 
     public void SetDoorOpen(InputAction.CallbackContext ctx)

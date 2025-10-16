@@ -117,6 +117,12 @@ public class LevelManager : MonoBehaviour
     /// <param name="addingPlayer"> True = Added || False = Removed </param>
     public void PlayerCollectionUpdate(GameObject playerChanged, bool addingPlayer)
     { 
+        if(!playerChanged.CompareTag("Player"))
+        { 
+            print("Object reference does not have the Player tag, this method is only for use with objects with the Player tag.");
+            return;
+        }
+
         bool dictCheck = playerObjTransColl.ContainsKey(playerChanged);
         if(!dictCheck)          //Object reference not found in keys, i.e. the player object hasn't been noted yet in the dictionary.
         { 
