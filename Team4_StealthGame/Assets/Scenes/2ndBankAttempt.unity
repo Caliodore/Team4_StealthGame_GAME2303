@@ -95341,6 +95341,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c269526b-bdf3-4f30-8fb7-ad8d7e503221
     m_ActionName: 'Testing/New action[/Keyboard/anyKey]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2068459337}
+        m_TargetAssemblyTypeName: DoorLogic, Assembly-CSharp
+        m_MethodName: SetDoorOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c4b22488-30f0-4a8d-8ab1-847a170da405
+    m_ActionName: 'Testing/SetOpen[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Debug
   m_DefaultActionMap: Testing

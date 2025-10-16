@@ -15,6 +15,4 @@ public class Valuable
     { 
         valType = 0;
     }
-
-
 }

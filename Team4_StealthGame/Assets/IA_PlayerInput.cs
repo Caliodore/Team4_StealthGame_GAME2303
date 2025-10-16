@@ -205,10 +205,19 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
             ""id"": ""4ebc7cd6-9c6c-49df-b0a1-2d9d590f8396"",
             ""actions"": [
                 {
-                    ""name"": ""RemoteStateChange"",
-                    ""type"": ""PassThrough"",
+                    ""name"": ""CycleState"",
+                    ""type"": ""Button"",
                     ""id"": ""c269526b-bdf3-4f30-8fb7-ad8d7e503221"",
-                    ""expectedControlType"": ""Key"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SetOpen"",
+                    ""type"": ""Button"",
+                    ""id"": ""c4b22488-30f0-4a8d-8ab1-847a170da405"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -222,29 +231,18 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Debug"",
-                    ""action"": ""RemoteStateChange"",
+                    ""action"": ""CycleState"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0ebad8fe-c7b2-44c7-8a30-ff1b149858f0"",
+                    ""id"": ""e7d150b7-4ed4-4fcd-a4ca-28696a36fcc6"",
                     ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Debug"",
-                    ""action"": ""RemoteStateChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""01769543-5775-411d-9ca6-df1b1a16be9d"",
-                    ""path"": ""<Keyboard>/t"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Debug"",
-                    ""action"": ""RemoteStateChange"",
+                    ""action"": ""SetOpen"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -283,7 +281,8 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         m_KBM_Sprint = m_KBM.FindAction("Sprint", throwIfNotFound: true);
         // Testing
         m_Testing = asset.FindActionMap("Testing", throwIfNotFound: true);
-        m_Testing_RemoteStateChange = m_Testing.FindAction("RemoteStateChange", throwIfNotFound: true);
+        m_Testing_CycleState = m_Testing.FindAction("CycleState", throwIfNotFound: true);
+        m_Testing_SetOpen = m_Testing.FindAction("SetOpen", throwIfNotFound: true);
     }
 
     ~@IA_PlayerInput()
@@ -483,7 +482,8 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
     // Testing
     private readonly InputActionMap m_Testing;
     private List<ITestingActions> m_TestingActionsCallbackInterfaces = new List<ITestingActions>();
-    private readonly InputAction m_Testing_RemoteStateChange;
+    private readonly InputAction m_Testing_CycleState;
+    private readonly InputAction m_Testing_SetOpen;
     /// <summary>
     /// Provides access to input actions defined in input action map "Testing".
     /// </summary>
@@ -496,9 +496,13 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         /// </summary>
         public TestingActions(@IA_PlayerInput wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Testing/RemoteStateChange".
+        /// Provides access to the underlying input action "Testing/CycleState".
         /// </summary>
-        public InputAction @RemoteStateChange => m_Wrapper.m_Testing_RemoteStateChange;
+        public InputAction @CycleState => m_Wrapper.m_Testing_CycleState;
+        /// <summary>
+        /// Provides access to the underlying input action "Testing/SetOpen".
+        /// </summary>
+        public InputAction @SetOpen => m_Wrapper.m_Testing_SetOpen;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -525,9 +529,12 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_TestingActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_TestingActionsCallbackInterfaces.Add(instance);
-            @RemoteStateChange.started += instance.OnRemoteStateChange;
-            @RemoteStateChange.performed += instance.OnRemoteStateChange;
-            @RemoteStateChange.canceled += instance.OnRemoteStateChange;
+            @CycleState.started += instance.OnCycleState;
+            @CycleState.performed += instance.OnCycleState;
+            @CycleState.canceled += instance.OnCycleState;
+            @SetOpen.started += instance.OnSetOpen;
+            @SetOpen.performed += instance.OnSetOpen;
+            @SetOpen.canceled += instance.OnSetOpen;
         }
 
         /// <summary>
@@ -539,9 +546,12 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="TestingActions" />
         private void UnregisterCallbacks(ITestingActions instance)
         {
-            @RemoteStateChange.started -= instance.OnRemoteStateChange;
-            @RemoteStateChange.performed -= instance.OnRemoteStateChange;
-            @RemoteStateChange.canceled -= instance.OnRemoteStateChange;
+            @CycleState.started -= instance.OnCycleState;
+            @CycleState.performed -= instance.OnCycleState;
+            @CycleState.canceled -= instance.OnCycleState;
+            @SetOpen.started -= instance.OnSetOpen;
+            @SetOpen.performed -= instance.OnSetOpen;
+            @SetOpen.canceled -= instance.OnSetOpen;
         }
 
         /// <summary>
@@ -638,11 +648,18 @@ public partial class @IA_PlayerInput: IInputActionCollection2, IDisposable
     public interface ITestingActions
     {
         /// <summary>
-        /// Method invoked when associated input action "RemoteStateChange" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "CycleState" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRemoteStateChange(InputAction.CallbackContext context);
+        void OnCycleState(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SetOpen" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSetOpen(InputAction.CallbackContext context);
     }
 }

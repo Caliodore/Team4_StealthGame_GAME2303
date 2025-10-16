@@ -1,3 +1,4 @@
+using System;
 using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,6 +6,39 @@ using UnityEngine.InputSystem;
 //namespace LevelComponent
 
 //{
+
+[Serializable]
+public struct DoorBools
+{  
+    public bool collisionEnabled { get; private set; }
+    public bool isSuspicious { get; private set; }
+    public bool isInteractable { get; private set; }
+    public bool blocksGuardPathing { get; private set; }
+
+    public DoorBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
+    { 
+        this.collisionEnabled = collisionEnabled;
+        this.isSuspicious = isSuspicious;
+        this.isInteractable = isInteractable;
+        this.blocksGuardPathing = blocksGuardPathing;
+    }
+
+    /// <summary>
+    /// Set states of interactivity for this door.
+    /// </summary>
+    /// <param name="collisionEnabled">Whether or not collision should be enabled.</param>
+    /// <param name="isSuspicious">Whether it draws guards' attention.</param>
+    /// <param name="isInteractable">Whether or not the player can interact with it.</param>
+    /// <param name="blocksGuardPathing">Whether or not the attached NavMeshObstacle is active or not.</param>
+    public void SetBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
+    { 
+        this.collisionEnabled = collisionEnabled;
+        this.isSuspicious = isSuspicious;
+        this.isInteractable = isInteractable;
+        this.blocksGuardPathing = blocksGuardPathing;
+    }
+}
+
 public class DoorLogic : Door
 {
     private LevelManager levelManager;
@@ -14,6 +48,9 @@ public class DoorLogic : Door
     private DoorInteractivity interactionStatus = new DoorInteractivity(true, false);
 
     private Collider attachedCollider;
+
+    [Header("Interactivity Vars")]
+    [SerializeField] private DoorBools doorInteractivity;
 
     //Yet to be implemented
     //private GameManager gameManager;
@@ -32,68 +69,63 @@ public class DoorLogic : Door
     {
         if(currentDoorState != changeToState)
         { 
+            print("Calling StateChanged");
             currentDoorState = changeToState;
             StateChanged();
             print($"Door State changed to: {currentDoorState}.");
         }
         else
-            print($"This door is already set to State {(int)currentDoorState}, {currentDoorState}.");
+            print($"This door is already set to State {currentDoorState}.");
     }
 
+    
+    /// <summary>
+    /// For mainly updating the DoorBools of attached door script, and then calling the appropriate methods to update other game components attached to the door.
+    /// </summary>
     private void StateChanged()
-    { 
-        switch(currentDoorState)
+    {
+        switch(currentDoorState)        //Set collision and sus vars this switch case.
         { 
             case(DoorType.Open):        //When a door is simply able to be passed through by all.
-                interactionStatus.BoolSet(false, false);
-                attachedCollider.enabled = false;
-                break;
+                doorInteractivity.SetBools(false, false, true, false);      
+                break;                  //CAN be walked through, does NOT arouse suspicion from guards, and CAN be interacted with still, guards WILL path through.
 
             case (DoorType.Picked):     //When a door was locked by some means, but is now open, but can be locked again.
-                interactionStatus.BoolSet(true, true);
-                attachedCollider.enabled = false;
-                break;
+                doorInteractivity.SetBools(false, true, true, false);
+                break;                  //CAN be walked through, is NOT suspicious, CAN be interacted with, guards WILL path through.
 
             case(DoorType.PLocked):     //When a door is locked by a physical lock.
-                interactionStatus.BoolSet(true, false);
-                attachedCollider.enabled = true;
-                break;
+                doorInteractivity.SetBools(true, false, true, false);
+                break;                  //Can NOT be walked through, is NOT suspicious, CAN be interacted with, guards WILL path through.
 
             case(DoorType.ELocked):     //When a door is electronically/remotely locked OR needs a keycard.
-                interactionStatus.BoolSet(true, false);
-                attachedCollider.enabled = true;
-                break;
+                doorInteractivity.SetBools(true, false, true, false);
+                break;                  //Can NOT be walked through, is NOT suspicious, CAN be interacted with, guards WILL path through.
 
             case(DoorType.Sealed):      //When a door has been physically and electronically sealed shut and there is no way to finesse through it.
-                interactionStatus.BoolSet(false, false);
-                attachedCollider.enabled = true;
-                break;
+                doorInteractivity.SetBools(true, false, false, true);
+                break;                  //Can NOT be walked through, is NOT suspicious, can NOT be interacted with, guards will NOT path through.
 
             case(DoorType.Destroyed):   //When a door is permanently open due to being destroyed. Normally can just GameObject.Destroy() when this happens.
-                interactionStatus.BoolSet(false, true);
-                attachedCollider.enabled = false;
-                break;
-
+                doorInteractivity.SetBools(false, true, false, false);
+                Destroy(gameObject);
+                break;                  //CAN be walked through, IS suspicious, can NOT be interacted with, guards WILL path through.
         }
+        print(doorInteractivity);
+        //Then update components/interactivity flags based on the vars changed.
+        
     }
 
     public void RemoteStateChange(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started)
+            ChangeDoorState(currentDoorState++);    
+    }
+
+    public void SetDoorOpen(InputAction.CallbackContext ctx)
     { 
-        if(ctx.performed)
-        {    
-            switch(ctx.control.name)
-            {
-                case("r"):
-                    ChangeDoorState((DoorType)(((int)currentDoorState + 1)%5));
-                    break;
-                case("t"):
-                    ChangeDoorState(DoorType.Open);
-                    break; 
-                case("f"):
-                    ChangeDoorState(DoorType.ELocked);
-                    break;
-            } 
-        }
+        if(ctx.started)
+            ChangeDoorState(0);    
     }
 } 
 //}
