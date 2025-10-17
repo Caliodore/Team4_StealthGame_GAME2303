@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using static Door;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 //namespace Manager
 //{ 
@@ -22,18 +23,23 @@ public class LevelManager : MonoBehaviour
     * spotted, the director could pass in player positions to a method that determines the closest door and closes them as such.
     */
 
+    /* Notes/Ideas:
+     * -Might want to have a "Room" script so we can designate the objects and reference them for guard pathing.
+     *      i.e.: Have a guard decide a patrol path based on choosing a set of rooms close to each other then finding patrol points between them.
+     */
+
     [Header("Door Collections")]
-    [SerializeField] private GameObject[] doorArray;
+    [SerializeField] private List<GameObject> doorList;
     [SerializeField] private Dictionary<GameObject, DoorType> doorStateRef;
     [SerializeField] private Dictionary<GameObject, Vector3> doorPosRef;
 
     [Header("Valuable Collections")]    
-    [SerializeField] private GameObject[] valuableArray;
+    [SerializeField] private List<GameObject> valuableList;
     [SerializeField] private Dictionary<GameObject, int> valuableTypeRef;
     [SerializeField] private Dictionary<GameObject, Vector3> valuablePosRef;
 
     [Header("Exit Collections")]
-    [SerializeField] private GameObject[] exitArray;
+    [SerializeField] private List<GameObject> exitList;
     [SerializeField] private Dictionary<GameObject, int> exitTypeRef;
     [SerializeField] private Dictionary<GameObject, Vector3> exitPosRef;
 
@@ -59,8 +65,9 @@ public class LevelManager : MonoBehaviour
     private void DoorCollectionGeneration()
     { 
         int iCount = 0;
-        doorArray = GameObject.FindGameObjectsWithTag("Door");
-        foreach(GameObject currentEntry in doorArray)
+        GameObject[] doorArray = GameObject.FindGameObjectsWithTag("Door");
+        doorList = doorArray.ToList();
+        foreach(GameObject currentEntry in doorList)
         { 
             doorStateRef.Add(currentEntry, currentEntry.GetComponent<DoorLogic>().currentDoorState);
             doorPosRef.Add(currentEntry, currentEntry.transform.position);
@@ -72,8 +79,9 @@ public class LevelManager : MonoBehaviour
     private void ValuableCollectionGeneration()
     {
         int iCount = 0;
-        valuableArray = GameObject.FindGameObjectsWithTag("Valuable");
-        foreach(GameObject currentEntry in valuableArray)
+        GameObject[] valuableArray = GameObject.FindGameObjectsWithTag("Valuable");
+        valuableList = valuableArray.ToList();
+        foreach(GameObject currentEntry in valuableList)
         { 
             int valInt = 0;
             if(currentEntry)
@@ -87,8 +95,9 @@ public class LevelManager : MonoBehaviour
     private void ExitCollectionGeneration()
     {
         int iCount = 0;
-        exitArray = GameObject.FindGameObjectsWithTag("Exit");
-        foreach(GameObject currentEntry in exitArray)
+        GameObject[] exitArray = GameObject.FindGameObjectsWithTag("Exit");
+        exitList = exitArray.ToList();
+        foreach(GameObject currentEntry in exitList)
         { 
             int valInt = 0;
             if(currentEntry)

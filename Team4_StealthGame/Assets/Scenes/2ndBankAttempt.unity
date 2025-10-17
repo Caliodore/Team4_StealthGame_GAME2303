@@ -29416,9 +29416,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06cde8a5756bf2f49838795b8037bfa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
-  doorArray: []
-  valuableArray: []
-  exitArray: []
+  doorList: []
+  valuableList: []
+  exitList: []
   playerLastKnownLocation: {fileID: 0}
 --- !u!4 &581928650
 Transform:
@@ -36747,6 +36747,7 @@ GameObject:
   - component: {fileID: 743046677}
   - component: {fileID: 743046683}
   - component: {fileID: 743046682}
+  - component: {fileID: 743046684}
   m_Layer: 0
   m_Name: JeffTest
   m_TagString: Player
@@ -36895,6 +36896,19 @@ MonoBehaviour:
   isSneaking: 0
   isMoving: 0
   isRunning: 0
+--- !u!114 &743046684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743046676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2f1a7d7120ad84ba42750b66c17e03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLogic
+  playerStatsRef: {fileID: 0}
 --- !u!1001 &752913214
 PrefabInstance:
   m_ObjectHideFlags: 0
