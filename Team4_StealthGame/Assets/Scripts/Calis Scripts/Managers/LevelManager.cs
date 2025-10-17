@@ -43,7 +43,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        //GenerateCollections();
+        GenerateCollections();
         playerObjTransColl = new Dictionary<GameObject, Transform>();
     }
 
@@ -66,7 +66,7 @@ public class LevelManager : MonoBehaviour
             doorPosRef.Add(currentEntry, currentEntry.transform.position);
             iCount++;
         }
-        print($"Finished generating door collections in {iCount} iterations.\nDoorStateRef Entries: {doorStateRef.Keys} Keys and {doorStateRef.Values} Values.\nDoorPositionRef Entries: {doorPosRef.Keys} Keys and {doorPosRef.Values} Values.");
+        print($"Finished generating door collections in {iCount} iterations.\nDoorStateRef Entries: {doorStateRef.Keys.Count} Keys and {doorStateRef.Values.Count} Values.\nDoorPositionRef Entries: {doorPosRef.Keys.Count} Keys and {doorPosRef.Values.Count} Values.");
     }
 
     private void ValuableCollectionGeneration()
@@ -81,7 +81,7 @@ public class LevelManager : MonoBehaviour
             valuablePosRef.Add(currentEntry, currentEntry.transform.position);
             iCount++;
         }
-        print($"Finished generating valuables collections in {iCount} iterations.\nValuableStateRef Entries: {valuableTypeRef.Keys} Keys and {valuableTypeRef.Values} Values.\nValuablePositionRef Entries: {valuablePosRef.Keys} Keys and {valuablePosRef.Values} Values.");
+        print($"Finished generating valuables collections in {iCount} iterations.\nValuableStateRef Entries: {valuableTypeRef.Keys.Count} Keys and {valuableTypeRef.Values.Count} Values.\nValuablePositionRef Entries: {valuablePosRef.Keys.Count} Keys and {valuablePosRef.Values.Count} Values.");
     }
 
     private void ExitCollectionGeneration()
@@ -96,7 +96,7 @@ public class LevelManager : MonoBehaviour
             exitPosRef.Add(currentEntry, currentEntry.transform.position);
             iCount++;
         }
-        print($"Finished generating valuables collections in {iCount} iterations.\nValuableStateRef Entries: {exitTypeRef.Keys} Keys and {exitTypeRef.Values} Values.\nValuablePositionRef Entries: {exitPosRef.Keys} Keys and {exitPosRef.Values} Values.");
+        print($"Finished generating valuables collections in {iCount} iterations.\nValuableStateRef Entries: {exitTypeRef.Keys.Count} Keys and {exitTypeRef.Values.Count} Values.\nValuablePositionRef Entries: {exitPosRef.Keys.Count} Keys and {exitPosRef.Values.Count} Values.");
     }
 
     public void DoorStateUpdate(GameObject doorRef, DoorType changeToState)

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,7 +9,6 @@ using UnityEngine.InputSystem;
 
 //{
 
-[Serializable]
 public struct DoorBools
 {  
     public bool collisionEnabled { get; private set; }
@@ -47,15 +48,14 @@ public struct DoorBools
 public class DoorLogic : Door
 {
     private LevelManager levelManager;
-    public DoorType currentDoorState { get; private set; }
+    [SerializeField] public DoorType currentDoorState { get; private set; }
 
     //First bool = Is interaction possible || Second bool = Do guards react to it
     private DoorInteractivity interactionStatus = new DoorInteractivity(true, false);
 
     private Collider attachedCollider;
 
-    [Header("Interactivity Vars")]
-    [SerializeField] private DoorBools doorInteractivity;
+    private DoorBools doorInteractivity;
 
     //Yet to be implemented
     //private GameManager gameManager;
