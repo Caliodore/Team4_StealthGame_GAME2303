@@ -95489,8 +95489,8 @@ GameObject:
   - component: {fileID: 2068459340}
   - component: {fileID: 2068459339}
   - component: {fileID: 2068459338}
-  - component: {fileID: 2068459337}
   - component: {fileID: 2068459336}
+  - component: {fileID: 2068459342}
   m_Layer: 0
   m_Name: Door
   m_TagString: Door
@@ -95537,7 +95537,7 @@ MonoBehaviour:
     m_ActionName: 'KB+M/Sprint[/Keyboard/ctrl]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2068459337}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: DoorLogic, Assembly-CSharp
         m_MethodName: RemoteStateChange
         m_Mode: 0
@@ -95553,7 +95553,7 @@ MonoBehaviour:
     m_ActionName: 'Testing/New action[/Keyboard/anyKey]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2068459337}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: DoorLogic, Assembly-CSharp
         m_MethodName: SetDoorOpen
         m_Mode: 0
@@ -95588,18 +95588,6 @@ MonoBehaviour:
   m_DefaultActionMap: Testing
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &2068459337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2068459335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43eb0ff8645daa04794852331c9d6865, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorLogic
 --- !u!65 &2068459338
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -95692,6 +95680,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2068459342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068459335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43eb0ff8645daa04794852331c9d6865, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorLogic
 --- !u!43 &2068491681
 Mesh:
   m_ObjectHideFlags: 0

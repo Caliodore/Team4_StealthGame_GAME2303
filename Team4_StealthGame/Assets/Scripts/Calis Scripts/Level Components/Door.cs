@@ -1,4 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable]
 public enum DoorType 
 { 
     Open = 0,
@@ -32,7 +37,7 @@ public struct DoorInteractivity
 
 public class Door : MonoBehaviour
 {
-    public DoorType doorState { get; private set; }
+    [SerializeField] public DoorType doorState { get; private set; }
 
     public Door()
     {
