@@ -8,6 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/GameMenu.unity
+    guid: 72d74b9472bf59a4893384ab4c5e545c
+  - enabled: 1
+    path: Assets/Scenes/Team4Stealth.unity
+    guid: b6a755932b1a42e40a0c9d2a0ec87f32
+  - enabled: 1
+    path: Assets/Scenes/2ndBankAttempt.unity
+    guid: 4530e912fe4a48a4489664c2ce1db9ee
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
