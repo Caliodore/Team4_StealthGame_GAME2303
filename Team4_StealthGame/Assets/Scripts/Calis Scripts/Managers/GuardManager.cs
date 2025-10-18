@@ -30,7 +30,7 @@ public class GuardManager : MonoBehaviour
      * We might have guards call on a certain number of other guards to help search an area as a response, and this script will help designate those guards.
      * 
      * TL;DR: This script will be a set of references that individual guards or other game objects can call upon to request more guards to go-
-     * -somewhere or do something in response to player actions. 
+     * -somewhere or do something in response to player actions.
      */
 
     /*

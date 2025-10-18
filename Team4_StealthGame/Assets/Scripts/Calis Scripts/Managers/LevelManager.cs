@@ -117,7 +117,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         { 
-            print($"GameObj reference not found in Dictionary.\nDoorRef: {doorRef.name} || StateChange: {changeToState}");    
+            print($"GameObj reference not found in Dictionary.\nDoorRef: {doorRef.name} || StateChange: {changeToState}");
         }
     }
 
