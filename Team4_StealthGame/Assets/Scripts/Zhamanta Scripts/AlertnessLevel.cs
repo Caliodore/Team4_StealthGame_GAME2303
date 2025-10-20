@@ -8,7 +8,7 @@ public class AlertnessLevel : MonoBehaviour
     {
         alertnessL = 0;
     }
-    public void IncreaseAlertnessLevel(float alertnessAmount, int eventType)
+    public void IncreaseAlertnessLevel(float alertnessAmount)
     {
         alertnessL += alertnessAmount;
     }
