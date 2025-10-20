@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96804b1472d367f47b0ae85008c7065b, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  health: 183.2
+  moveSpeed: 0
+  weaponDamage: 0
