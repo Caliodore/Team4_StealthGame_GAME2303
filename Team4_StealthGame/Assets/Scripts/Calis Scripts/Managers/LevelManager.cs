@@ -26,6 +26,7 @@ public class LevelManager : MonoBehaviour
     /* Notes/Ideas:
      * -Might want to have a "Room" script so we can designate the objects and reference them for guard pathing.
      *      i.e.: Have a guard decide a patrol path based on choosing a set of rooms close to each other then finding patrol points between them.
+     * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
      */
 
     [Header("Door Collections")]

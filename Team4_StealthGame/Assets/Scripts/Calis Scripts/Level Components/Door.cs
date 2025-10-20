@@ -19,14 +19,13 @@ public enum DoorType
 /// </summary>
 public struct DoorInteractivity
 { 
+    public bool interactivityState { get; private set; }
+    public bool suspiciousBool { get; private set; }
     public DoorInteractivity(bool canInteract, bool isSus)
     { 
         interactivityState = canInteract;
         suspiciousBool = isSus;
     }
-
-    public bool interactivityState { get; private set; }
-    public bool suspiciousBool { get; private set; }
 
     public void BoolSet(bool intChange, bool susChange)
     { 

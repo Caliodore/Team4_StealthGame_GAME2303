@@ -16,6 +16,13 @@ public struct DoorBools
     public bool isInteractable { get; private set; }
     public bool blocksGuardPathing { get; private set; }
 
+    /// <summary>
+    /// bools = collisionEnabled, isSuspicious, isInteractable, blocksGuardPathing
+    /// </summary>
+    /// <param name="collisionEnabled">Whether or not collision should be enabled.</param>
+    /// <param name="isSuspicious">Whether it draws guards' attention.</param>
+    /// <param name="isInteractable">Whether or not the player can interact with it.</param>
+    /// <param name="blocksGuardPathing">Whether or not the attached NavMeshObstacle is active or not.</param>
     public DoorBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
     { 
         this.collisionEnabled = collisionEnabled;
@@ -41,7 +48,7 @@ public struct DoorBools
 
     public override string ToString()
     {
-        return new string($"{collisionEnabled.ToString()},{isSuspicious.ToString()},{isInteractable.ToString()},{blocksGuardPathing.ToString()}");
+        return new string($"{collisionEnabled.ToString()}, {isSuspicious.ToString()}, {isInteractable.ToString()}, {blocksGuardPathing.ToString()}");
     }
 }
 
@@ -63,7 +70,7 @@ public class DoorLogic : Door
 
     private void Awake()
     {
-        attachedCollider = GetComponent<Collider>();
+        attachedCollider = this.gameObject.GetComponent<Collider>();
     }
 
     /// <summary>
@@ -117,10 +124,13 @@ public class DoorLogic : Door
                 break;                  //CAN be walked through, IS suspicious, can NOT be interacted with, guards WILL path through.
         }
         print(doorInteractivity.ToString());
-        //Then update components/interactivity flags based on the vars changed.
-        
+        UpdateDoorComponents();
     }
 
+    /// <summary>
+    /// Just for testing purposes, cycle through the DoorType states on call.
+    /// </summary>
+    /// <param name="ctx"></param>
     public void RemoteStateChange(InputAction.CallbackContext ctx)
     {
         if(ctx.started)
@@ -132,10 +142,72 @@ public class DoorLogic : Door
         }
     }
 
+    /// <summary>
+    /// Made for testing to force the door back to DoorType.Open, i.e., the beginning of the enum index.
+    /// </summary>
+    /// <param name="ctx"></param>
     public void SetDoorOpen(InputAction.CallbackContext ctx)
     { 
         if(ctx.started)
             ChangeDoorState(0);    
+    }
+
+    /// <summary>
+    /// To be called by the state/logic handler after updating DoorInteractivity and stuff.
+    /// </summary>
+    private void UpdateDoorComponents()
+    {
+        if(doorInteractivity.collisionEnabled)
+        {
+            attachedCollider.enabled = true;
+        }
+        else if(!doorInteractivity.collisionEnabled)
+        { 
+            attachedCollider.enabled = false;
+        }
+    //------------------------------------------------//
+        if(doorInteractivity.isSuspicious)
+        { 
+            //Enable suspicion collider/coroutine.
+        }
+        else if(!doorInteractivity.isSuspicious)
+        { 
+            //Invert above values.
+        }
+    //------------------------------------------------//
+        if(doorInteractivity.isInteractable)
+        { 
+            //Placeholder
+        }
+        else if(!doorInteractivity.isInteractable)
+        { 
+            //Invert it.
+        }
+    //------------------------------------------------//
+        if(doorInteractivity.blocksGuardPathing)
+        { 
+            //Activate NavMeshObstacle and make sure guard paths update.
+        }
+        else if(!doorInteractivity.blocksGuardPathing)
+        { 
+            //Deactivate and update guard paths.
+        }
+    }
+
+    /// <summary>
+    /// Method to be called when player attempts to interact with a door.
+    /// </summary>
+    public void PlayerInteractHandler()
+    { 
+        if(doorInteractivity.isInteractable)
+        { 
+            //We could use a switch case here or another struct to handle bools a bit neater.
+            //When it comes to being interactable doors can be picked, re-locked, or simply closed maybe?
+        }
+        else
+        { 
+            print($"Player cannot interact with this door, it is: {currentDoorState.ToString()}");    
+        }
     }
 } 
 //}

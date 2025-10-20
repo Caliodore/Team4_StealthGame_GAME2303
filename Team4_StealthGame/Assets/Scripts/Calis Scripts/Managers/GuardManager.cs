@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -46,9 +49,51 @@ public class GuardManager : MonoBehaviour
     [SerializeField] public NetworkManager netManager;
 
     [Header("Guard Body Vars")]
-    public bool alarmActive;
-    public bool unawareOfPlayers;
-    public bool currentlySearchingForPlayers;
-    public int currentlyActiveGuards;
+    private bool alarmActive;
+    private bool unawareOfPlayers;
+    private bool currentlySearchingForPlayers;
+    private int currentlyActiveGuards;
 
+    //----Property Setting-----//
+    public bool AlarmActive
+    { 
+        get { return alarmActive; }
+    }
+    public bool UnawareOfPlayers
+    { 
+        get { return unawareOfPlayers; }
+    }
+    public bool SearchingForPlayers
+    { 
+        get { return currentlySearchingForPlayers; }
+    }
+
+    private void Awake()
+    {
+        currentlyActiveGuards = FindObjectsByType<GuardLogic>(FindObjectsSortMode.None).Count();
+    }
+
+    public void GetNearestGuards(int amountOfGuards, Vector3 sendToHere)
+    { 
+        Dictionary<float, GameObject> relativePositions = new Dictionary<float, GameObject>();
+        float[] distances = new float[currentlyActiveGuards];
+        relativePositions.Clear();
+
+        foreach(KeyValuePair<GameObject,Transform> guardTransformRef in guardObjTransPairs)
+        { 
+            var relDis = Vector3.Distance(guardTransformRef.Value.position, sendToHere);
+            relativePositions.Add(relDis, guardTransformRef.Key);
+        }
+
+        Array.Sort(distances);
+
+        for(int i = 0; i < amountOfGuards; i++)
+        {
+            relativePositions.TryGetValue(distances[i], out GameObject guardRef);
+            if (guardRef != null) 
+            {
+                //Get whichever movement script is associated with guardRef GameObject and call the public method to investigate the sendToHere position.
+            }
+        }
+    }
 }
