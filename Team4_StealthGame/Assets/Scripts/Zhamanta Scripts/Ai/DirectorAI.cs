@@ -53,6 +53,10 @@ public class DirectorAI : MonoBehaviour
         {
             alertness = Alertness.Lockdown;
         }
+        else if (alertnessL < 0 || alertnessL >= 100)
+        { 
+            print($"Alertness is out of range. Current Value: {alertnessL}");    
+        }
     }
 
     private void StageBehavior()

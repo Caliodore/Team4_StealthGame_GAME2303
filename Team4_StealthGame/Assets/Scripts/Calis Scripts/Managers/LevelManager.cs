@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using static Door;
@@ -24,8 +25,6 @@ public class LevelManager : MonoBehaviour
     */
 
     /* Notes/Ideas:
-     * -Might want to have a "Room" script so we can designate the objects and reference them for guard pathing.
-     *      i.e.: Have a guard decide a patrol path based on choosing a set of rooms close to each other then finding patrol points between them.
      * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
      */
 
@@ -33,6 +32,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private List<GameObject> doorList;
     [SerializeField] private Dictionary<GameObject, DoorType> doorStateRef;
     [SerializeField] private Dictionary<GameObject, Vector3> doorPosRef;
+    [SerializeField] private Dictionary<GameObject, GameObject> roomDoorsRef;
 
     [Header("Valuable Collections")]    
     [SerializeField] private List<GameObject> valuableList;
@@ -58,6 +58,7 @@ public class LevelManager : MonoBehaviour
     {
         print("Starting collection generation.");
         DoorCollectionGeneration();
+        RoomCollectionGeneration();
         ValuableCollectionGeneration();
         ExitCollectionGeneration();
         print("Finished generating collections.");
@@ -67,6 +68,13 @@ public class LevelManager : MonoBehaviour
     { 
         int iCount = 0;
         GameObject[] doorArray = GameObject.FindGameObjectsWithTag("Door");
+
+        if(doorArray.Length == 0)
+        { 
+            print("No doors found.");
+            return;
+        }
+
         doorList = doorArray.ToList();
         foreach(GameObject currentEntry in doorList)
         { 
@@ -77,10 +85,46 @@ public class LevelManager : MonoBehaviour
         print($"Finished generating door collections in {iCount} iterations.\nDoorStateRef Entries: {doorStateRef.Keys.Count} Keys and {doorStateRef.Values.Count} Values.\nDoorPositionRef Entries: {doorPosRef.Keys.Count} Keys and {doorPosRef.Values.Count} Values.");
     }
 
+    private void RoomCollectionGeneration()
+    {
+        int dCount = 0;
+        int rCount = 0;
+        int dInRCount = 0;
+        GameObject[] roomArray = GameObject.FindGameObjectsWithTag("Room");
+
+        if(roomArray.Length == 0)
+        { 
+            print("No rooms found.");
+            return;
+        }
+
+        var roomList = roomArray.ToList();
+        foreach(GameObject roomRef in roomArray)
+        {
+            foreach(GameObject doorInRoom in roomRef.GetComponent<Room>().doorList)
+            { 
+                roomDoorsRef.Add(roomRef, doorInRoom);
+                dCount++;
+            }
+            dInRCount = dCount;
+            rCount++;
+            print($"Room {rCount} has {dInRCount} doors.\nTotal So-Far || Rooms: {rCount} || Doors: {dCount}");
+            dInRCount = 0;
+        }
+        print($"Finished Room/Door collection in {dCount} interior-loop iterations and {rCount} exterior-loop iterations.\nRoom/Door Coll || Rooms: {rCount} || Doors: {dCount}");
+    }
+
     private void ValuableCollectionGeneration()
     {
         int iCount = 0;
         GameObject[] valuableArray = GameObject.FindGameObjectsWithTag("Valuable");
+
+        if(valuableArray.Length == 0)
+        { 
+            print("No rooms found.");
+            return;
+        }
+
         valuableList = valuableArray.ToList();
         foreach(GameObject currentEntry in valuableList)
         { 
@@ -97,6 +141,13 @@ public class LevelManager : MonoBehaviour
     {
         int iCount = 0;
         GameObject[] exitArray = GameObject.FindGameObjectsWithTag("Exit");
+
+        if(exitArray.Length == 0)
+        { 
+            print("No rooms found.");
+            return;
+        }
+
         exitList = exitArray.ToList();
         foreach(GameObject currentEntry in exitList)
         { 
@@ -109,6 +160,11 @@ public class LevelManager : MonoBehaviour
         print($"Finished generating valuables collections in {iCount} iterations.\nValuableStateRef Entries: {exitTypeRef.Keys.Count} Keys and {exitTypeRef.Values.Count} Values.\nValuablePositionRef Entries: {exitPosRef.Keys.Count} Keys and {exitPosRef.Values.Count} Values.");
     }
 
+    /// <summary>
+    /// Sees if GameObject reference for doorRef is stored, if so then update the associated DoorType.
+    /// </summary>
+    /// <param name="doorRef">GameObject ref of the door entry being changed.</param>
+    /// <param name="changeToState">State that the door is changing TO.</param>
     public void DoorStateUpdate(GameObject doorRef, DoorType changeToState)
     { 
         if(doorStateRef.ContainsKey(doorRef))
@@ -171,6 +227,10 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// For debugging handling multiple players while using InputActions.
+    /// </summary>
+    /// <param name="ctx"></param>
     public void AddPlayerRemoteTest(InputAction.CallbackContext ctx)
     {
         if(ctx.started)
@@ -182,6 +242,31 @@ public class LevelManager : MonoBehaviour
             else
                 print("Could not find an object with the tag 'Player'.");
         }
+    }
+    
+    /// <summary>
+    /// Call to seal the doors within a specific room.
+    /// </summary>
+    public void SealRoom(GameObject roomRef)
+    { 
+        
+    }
+
+    /// <summary>
+    /// Call to start/end a lockdown.
+    /// </summary>
+    /// <param name="lockdownStatus">T = ACTIVATE LOCKDOWN || F = RELEASE LOCKDOWN</param>
+    public void LockdownHandler(bool lockdownStatus)
+    { 
+        
+    }
+
+    /// <summary>
+    /// Mainly for the GuardManager to update references to NavMeshObstacles. Individual guards can handle the pathing.
+    /// </summary>
+    public void UpdateObstacleReferences()
+    { 
+        
     }
 }
 //}

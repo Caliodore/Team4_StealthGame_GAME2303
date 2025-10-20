@@ -11,10 +11,12 @@ public class Room : MonoBehaviour
     public Transform roomPos;
     public Transform[] attachedPatrolPoints;
     public Transform[] possibleDoors;
+    public List<GameObject> doorList;
 
     private void Awake()
     {
         thisRoom = gameObject.GetComponent<Room>();
+        FindDoors();
     }
 
     private void FindDoors()
@@ -24,6 +26,7 @@ public class Room : MonoBehaviour
         { 
             Transform doorTrans = doorScript.transform;
             GameObject doorObj = doorTrans.gameObject;
+            doorList.Add(doorObj);
         }
     }
 }

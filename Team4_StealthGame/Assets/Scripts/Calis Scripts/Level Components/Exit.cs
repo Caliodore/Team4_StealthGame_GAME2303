@@ -11,15 +11,20 @@ public enum ExitType
 
 public class Exit : MonoBehaviour
 {
-    public ExitType exitTypeState { get; private set; }
+    private ExitType exitTypeState;
 
     public Exit()
     {
         exitTypeState = ExitType.Constant;    
     }
 
-    public ExitType GetState()
+    public ExitType ExitTypeState
     { 
-        return exitTypeState;
+        get {return exitTypeState; }
+    }
+
+    public void SetExitType(ExitType inputState)
+    { 
+        exitTypeState = inputState;
     }
 }

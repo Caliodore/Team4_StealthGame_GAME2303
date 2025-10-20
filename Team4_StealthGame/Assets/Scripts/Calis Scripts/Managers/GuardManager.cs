@@ -67,12 +67,19 @@ public class GuardManager : MonoBehaviour
     { 
         get { return currentlySearchingForPlayers; }
     }
+    //------------------------//
 
     private void Awake()
     {
         currentlyActiveGuards = FindObjectsByType<GuardLogic>(FindObjectsSortMode.None).Count();
     }
 
+    /// <summary>
+    /// Script intended to use in response to players causing a larger/louder distraction.
+    /// Grabs from guard list and finds the amountOfGuards closest guards to then send to sendToHere.
+    /// </summary>
+    /// <param name="amountOfGuards">How many guards are responding to distraction?</param>
+    /// <param name="sendToHere">Where was the distraction source?</param>
     public void GetNearestGuards(int amountOfGuards, Vector3 sendToHere)
     { 
         Dictionary<float, GameObject> relativePositions = new Dictionary<float, GameObject>();
