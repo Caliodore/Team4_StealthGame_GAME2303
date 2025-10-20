@@ -187,11 +187,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Controller
   gunHold: {fileID: 8577700627370357781}
   initialGun: {fileID: 7111535178207495634, guid: e014d31795a64d7449b44672040f4431, type: 3}
+  health: {fileID: 11400000, guid: 7b8a4f9d86c31ab43ae11c53ffbd2de6, type: 2}
+  isMakingSound: 0
+  isMoving: 0
   movementSpeed: 10
   lookSensitivityX: 3
   lookSensitivityY: 3
   gravity: -9.81
-  jumpForce: 10
 --- !u!114 &2759436388558794834
 MonoBehaviour:
   m_ObjectHideFlags: 0

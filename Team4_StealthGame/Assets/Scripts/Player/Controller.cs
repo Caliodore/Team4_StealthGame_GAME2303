@@ -10,13 +10,17 @@ public class Controller : MonoBehaviour
     CharacterController controller;
     [SerializeField] Transform gunHold;
     [SerializeField] Gun initialGun;
+    [SerializeField] HealthSO health;
+
+    // need this for unity event
+    public bool isMakingSound;
+    public bool isMoving = false;
 
     // stats
     [SerializeField] float movementSpeed = 2.0f;
     [SerializeField] float lookSensitivityX = 1.0f;
     [SerializeField] float lookSensitivityY = 1.0f;
     [SerializeField] float gravity = -9.81f;
-    [SerializeField] float jumpForce = 10;
 
     // private variables
     Vector3 origin;
@@ -70,6 +74,16 @@ public class Controller : MonoBehaviour
         Vector3 noVelocity = new Vector3(0, velocity.y, 0);
         velocity = Vector3.Lerp(velocity, noVelocity, 5 * Time.deltaTime);
 
+        // player sneak logic
+        if (!sprintInput || movementInput.magnitude == 0)
+        {
+            isMakingSound = false;
+        }
+        else if (sprintInput && movementInput.magnitude > 0)
+        {
+            isMakingSound = true;
+        }
+
     }
     /*void AutomaticFire()
     {
@@ -100,7 +114,6 @@ public class Controller : MonoBehaviour
     void Movement()
     {
 
-        Debug.Log("moving...");
 
         grounded = controller.isGrounded;
 
@@ -119,8 +132,16 @@ public class Controller : MonoBehaviour
 
     void OnMovement(InputValue v)
     {
-        Debug.Log("Message called OnMovement!");
         movementInput = v.Get<Vector2>();
+
+        if (movementInput.magnitude > 0)
+        {
+            isMoving = true;
+        }
+        else
+        {
+            isMoving = false;
+        }
     }
 
     void Look()
@@ -135,7 +156,6 @@ public class Controller : MonoBehaviour
     public void OnLook(InputValue v)
     {
         lookInput = v.Get<Vector2>();
-        print("OnLook Called!");
     }
 
     void OnScrollWheel(InputValue v)

@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96804b1472d367f47b0ae85008c7065b, type: 3}
-  m_Name: PlayerStats
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  health: 183.2
-  moveSpeed: 0
-  weaponDamage: 0
+  m_Script: {fileID: 11500000, guid: 9179a8fd82e3c6640a683a0716d44624, type: 3}
+  m_Name: HealthSO
+  m_EditorClassIdentifier: Assembly-CSharp::HealthSO
+  currentHealth: 0
+  maxHealth: 0
