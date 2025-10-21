@@ -10,7 +10,6 @@ public class Room : MonoBehaviour
     public Collider attachedCollider;
     public Transform roomPos;
     public Transform[] attachedPatrolPoints;
-    public Transform[] possibleDoors;
     public List<GameObject> doorList;
 
     private void Awake()

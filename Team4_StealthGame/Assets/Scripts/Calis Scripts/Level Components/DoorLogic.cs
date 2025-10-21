@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 //namespace LevelComponent
 
@@ -54,23 +55,22 @@ public struct DoorBools
 
 public class DoorLogic : Door
 {
+    public DoorType currentDoorState { get; private set; }
+
     private LevelManager levelManager;
-    [SerializeField] public DoorType currentDoorState { get; private set; }
-
-    //First bool = Is interaction possible || Second bool = Do guards react to it
     private DoorInteractivity interactionStatus = new DoorInteractivity(true, false);
-
-    private Collider attachedCollider;
-
     private DoorBools doorInteractivity;
 
-    //Yet to be implemented
-    //private GameManager gameManager;
-    //private AIDirector gameDirector;
+    [Header("Player Interaction")]
+    public Collider attachedCollider;
+    public Collider lastPlayerCollided;
+    public List<Collider> playersInCollider;
+    public string playerTag;
 
     private void Awake()
     {
-        attachedCollider = this.gameObject.GetComponent<Collider>();
+        attachedCollider = gameObject.GetComponent<Collider>();
+        playerTag = FindAnyObjectByType<PlayerLogic>().tag;
     }
 
     /// <summary>
@@ -120,6 +120,7 @@ public class DoorLogic : Door
 
             case(DoorType.Destroyed):   //When a door is permanently open due to being destroyed. Normally can just GameObject.Destroy() when this happens.
                 doorInteractivity.SetBools(false, true, false, false);
+                //Update collections that reference this door before destroying GameObject.
                 Destroy(gameObject);
                 break;                  //CAN be walked through, IS suspicious, can NOT be interacted with, guards WILL path through.
         }
@@ -195,18 +196,65 @@ public class DoorLogic : Door
     }
 
     /// <summary>
-    /// Method to be called when player attempts to interact with a door.
+    /// Method to be called when player attempts to interact with a door by holding a button like E or w/ever we decide.
     /// </summary>
     public void PlayerInteractHandler()
     { 
         if(doorInteractivity.isInteractable)
-        { 
-            //We could use a switch case here or another struct to handle bools a bit neater.
-            //When it comes to being interactable doors can be picked, re-locked, or simply closed maybe?
+        {
+            switch(currentDoorState)
+            {
+                case(DoorType.Open):
+                    //Players can close the door to block LoS or obscure sound.
+                    break;
+
+                case(DoorType.Picked):
+                    //Players can re-lock.
+                    break;
+
+                case(DoorType.PLocked):
+                    //Player needs to be able to lockpick, maybe some have tools that make it faster?
+                    break;
+
+                case(DoorType.ELocked):
+                    //Player needs to be able to hack.
+                    break;
+            }
         }
         else
         { 
-            print($"Player cannot interact with this door, it is: {currentDoorState.ToString()}");    
+            print($"Player cannot interact with this door, it is: {currentDoorState}");    
+        }
+    }
+
+    private void DoorInteractBuffer()
+    { 
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag(playerTag))
+        {
+            PlayerLogic playerEntering = other.GetComponent<PlayerLogic>();
+            playersInCollider.Add(other);
+            playerEntering.playerAttemptInteract.AddListener(DoorInteractBuffer);
+            playerEntering.isDoorListening = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag(playerTag))
+        {
+            PlayerLogic playerLeaving = other.GetComponent<PlayerLogic>();
+            bool playerFoundAndRemoved = playersInCollider.Remove(other);
+            if(!playerFoundAndRemoved)
+            {
+                print($"Either player was not found as having already collided or started in this collider. PlayerObjName: {other.gameObject.name}");    
+            }
+            playerLeaving.playerAttemptInteract.RemoveListener(DoorInteractBuffer);
+            playerLeaving.isDoorListening = false;
         }
     }
 } 
