@@ -5,11 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using static Door;
 using UnityEngine.AI;
+using Unity.AI.Navigation;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine.Events;
 
-//namespace Manager
-//{ 
+namespace Cali
+{ 
 /// <summary>
 /// Script intended to keep track of and simplify communication/calculations between player actions, the director, and the physical components of the level.
 /// Specifically, it does not keep track of or interact with the guards directly, that is done through GuardManager.
@@ -28,30 +30,37 @@ public class LevelManager : MonoBehaviour
      * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
      */
 
+    [Header("Interactions")]
+    [SerializeField] UnityEvent toggleLockdown;
+    [SerializeField] GuardManager guardManager;
+    [SerializeField] NavMeshSurface levelMesh;
+    public bool lockdownActive;
+
     [Header("Door Collections")]
-    [SerializeField] private List<GameObject> doorList;
-    [SerializeField] private Dictionary<GameObject, DoorType> doorStateRef;
-    [SerializeField] private Dictionary<GameObject, Vector3> doorPosRef;
-    [SerializeField] private Dictionary<GameObject, GameObject> roomDoorsRef;
+    [SerializeField] List<GameObject> doorList;
+    [SerializeField] Dictionary<GameObject, DoorType> doorStateRef;
+    [SerializeField] Dictionary<GameObject, Vector3> doorPosRef;
+    [SerializeField] Dictionary<GameObject, GameObject> roomDoorsRef;
 
     [Header("Valuable Collections")]    
-    [SerializeField] private List<GameObject> valuableList;
-    [SerializeField] private Dictionary<GameObject, int> valuableTypeRef;
-    [SerializeField] private Dictionary<GameObject, Vector3> valuablePosRef;
+    [SerializeField] List<GameObject> valuableList;
+    [SerializeField] Dictionary<GameObject, int> valuableTypeRef;
+    [SerializeField] Dictionary<GameObject, Vector3> valuablePosRef;
 
     [Header("Exit Collections")]
-    [SerializeField] private List<GameObject> exitList;
-    [SerializeField] private Dictionary<GameObject, int> exitTypeRef;
-    [SerializeField] private Dictionary<GameObject, Vector3> exitPosRef;
+    [SerializeField] List<GameObject> exitList;
+    [SerializeField] Dictionary<GameObject, int> exitTypeRef;
+    [SerializeField] Dictionary<GameObject, Vector3> exitPosRef;
 
     [Header("Player References")]
-    [SerializeField] private Dictionary<GameObject, Transform> playerObjTransColl;
-    [SerializeField] private Transform playerLastKnownLocation;
+    [SerializeField] Dictionary<GameObject, Transform> playerObjTransColl;
+    [SerializeField] Transform playerLastKnownLocation;
 
     private void Awake()
     {
-        GenerateCollections();
         playerObjTransColl = new Dictionary<GameObject, Transform>();
+        lockdownActive = false;
+        GenerateCollections();
     }
 
     private void GenerateCollections()
@@ -78,8 +87,10 @@ public class LevelManager : MonoBehaviour
         doorList = doorArray.ToList();
         foreach(GameObject currentEntry in doorList)
         { 
-            doorStateRef.Add(currentEntry, currentEntry.GetComponent<DoorLogic>().currentDoorState);
+            DoorLogic doorScript = currentEntry.GetComponent<DoorLogic>();
+            doorStateRef.Add(currentEntry, doorScript.currentDoorState);
             doorPosRef.Add(currentEntry, currentEntry.transform.position);
+            toggleLockdown.AddListener(doorScript.lockdownToggle);
             iCount++;
         }
         print($"Finished generating door collections in {iCount} iterations.\nDoorStateRef Entries: {doorStateRef.Keys.Count} Keys and {doorStateRef.Values.Count} Values.\nDoorPositionRef Entries: {doorPosRef.Keys.Count} Keys and {doorPosRef.Values.Count} Values.");
@@ -171,6 +182,11 @@ public class LevelManager : MonoBehaviour
         {
             doorStateRef[doorRef] = changeToState;
             print($"DoorStateRef updated {doorRef.name} state to {changeToState}.");
+            if (changeToState == DoorType.Destroyed)
+            {
+                toggleLockdown.RemoveListener(doorRef.GetComponent<DoorLogic>().lockdownToggle);
+                doorStateRef.Remove(doorRef);
+            }
         }
         else
         { 
@@ -247,26 +263,26 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Call to seal the doors within a specific room.
     /// </summary>
-    public void SealRoom(GameObject roomRef)
-    { 
-        
+    public void SealUnsealRoom(GameObject roomRef, bool sealOrUnseal)
+    {
+        roomRef.GetComponent<Room>().SealAttachedDoors(sealOrUnseal);
     }
 
     /// <summary>
     /// Call to start/end a lockdown.
     /// </summary>
     /// <param name="lockdownStatus">T = ACTIVATE LOCKDOWN || F = RELEASE LOCKDOWN</param>
-    public void LockdownHandler(bool lockdownStatus)
-    { 
-        
+    public void LockdownHandler()
+    {
+        toggleLockdown.Invoke();
     }
 
     /// <summary>
     /// Mainly for the GuardManager to update references to NavMeshObstacles. Individual guards can handle the pathing.
     /// </summary>
     public void UpdateObstacleReferences()
-    { 
-        
+    {
+        guardManager.UpdateNavMeshesCall();
     }
 }
-//}
+}

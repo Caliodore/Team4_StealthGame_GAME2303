@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEditor.Build.Content;
+using Cali;
 
 // This script will trigger/call events from the LevelManager and the GuardManager depending on the alartness level and other minor events
 // No other script should call anything from this script

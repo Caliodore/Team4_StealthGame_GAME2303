@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Build.Content;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-//namespace LevelComponent
+namespace Cali
 
-//{
+{
 
 public struct DoorBools
 {  
@@ -56,13 +58,13 @@ public class DoorLogic : Door
 {
     private LevelManager levelManager;
     [SerializeField] public DoorType currentDoorState { get; private set; }
+    [SerializeField] public NavMeshObstacle attachedMeshObstacle;
 
-    //First bool = Is interaction possible || Second bool = Do guards react to it
-    private DoorInteractivity interactionStatus = new DoorInteractivity(true, false);
-
-    private Collider attachedCollider;
+    public UnityAction lockdownToggle;
+    public DoorType storedDoorState;
 
     private DoorBools doorInteractivity;
+    private Collider attachedCollider;
 
     //Yet to be implemented
     //private GameManager gameManager;
@@ -71,6 +73,7 @@ public class DoorLogic : Door
     private void Awake()
     {
         attachedCollider = this.gameObject.GetComponent<Collider>();
+        lockdownToggle += LockdownToggle;
     }
 
     /// <summary>
@@ -80,7 +83,8 @@ public class DoorLogic : Door
     public void ChangeDoorState(DoorType changeToState)
     {
         if(currentDoorState != changeToState)
-        { 
+        {
+            storedDoorState = currentDoorState;
             print("Calling StateChanged");
             currentDoorState = changeToState;
             StateChanged();
@@ -124,6 +128,7 @@ public class DoorLogic : Door
                 break;                  //CAN be walked through, IS suspicious, can NOT be interacted with, guards WILL path through.
         }
         print(doorInteractivity.ToString());
+        levelManager.DoorStateUpdate(gameObject,currentDoorState);
         UpdateDoorComponents();
     }
 
@@ -186,11 +191,13 @@ public class DoorLogic : Door
     //------------------------------------------------//
         if(doorInteractivity.blocksGuardPathing)
         { 
-            //Activate NavMeshObstacle and make sure guard paths update.
+            attachedMeshObstacle.enabled = true;
+            levelManager.UpdateObstacleReferences();
         }
         else if(!doorInteractivity.blocksGuardPathing)
         { 
-            //Deactivate and update guard paths.
+            attachedMeshObstacle.enabled = true;
+            levelManager.UpdateObstacleReferences();
         }
     }
 
@@ -209,5 +216,19 @@ public class DoorLogic : Door
             print($"Player cannot interact with this door, it is: {currentDoorState.ToString()}");    
         }
     }
+
+    private void LockdownToggle()
+    { 
+        if(levelManager.lockdownActive)
+        { 
+            storedDoorState = currentDoorState;
+            ChangeDoorState(DoorType.Sealed);
+        }
+        else
+        { 
+            ChangeDoorState(storedDoorState);
+        }
+        
+    }
 } 
-//}
+}
