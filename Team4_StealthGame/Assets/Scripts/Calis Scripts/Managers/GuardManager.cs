@@ -46,45 +46,60 @@ namespace Cali
          */
 
         [Header("References to Cache")]
-        [SerializeField] public Dictionary<GameObject, Transform> guardObjTransPairs;
-        [SerializeField] public List<Transform> allPatrolPoints;
-        [SerializeField] public LevelManager levelManager;
-        [SerializeField] public NetworkManager netManager;
+        [SerializeField] Dictionary<GameObject, Transform> guardObjTransPairs;
+        [SerializeField] List<Transform> allPatrolPoints;
+        [SerializeField] LevelManager levelManager;
+        [SerializeField] NetworkManager netManager;
 
         [Header("Guard Body Vars")]
-        private bool alarmActive;
-        private bool unawareOfPlayers;
-        private bool currentlySearchingForPlayers;
-        private int currentlyActiveGuards;
+        [SerializeField] private bool alarmActive = false;
+        private bool unawareOfPlayers = true;
+        private bool currentlySearchingForPlayers = false;
+        private int currentlyActiveGuards = 0;
 
         //----Property Setting-----//
-        public bool AlarmActive
+        [SerializeField] public bool AlarmActive
         {
             get { return alarmActive; }
         }
-        public bool UnawareOfPlayers
+        [SerializeField] public bool UnawareOfPlayers
         {
             get { return unawareOfPlayers; }
         }
-        public bool SearchingForPlayers
+        [SerializeField] public bool SearchingForPlayers
         {
             get { return currentlySearchingForPlayers; }
+        }
+        [SerializeField] public int CurrentlyActiveGuards
+        { 
+            get { return currentlyActiveGuards; }    
         }
         //------------------------//
 
         private void Awake()
         {
             currentlyActiveGuards = FindObjectsByType<GuardLogic>(FindObjectsSortMode.None).Count();
+            GenerateRefs();
         }
 
         private void GenerateRefs()
         {
-
+            GenerateGuardCollection();
         }
 
         private void GenerateGuardCollection()
-        { 
-                
+        {
+            GameObject[] guardArray = GameObject.FindGameObjectsWithTag("Guard");
+            if(guardArray.Length != 0)
+            {
+                foreach (GameObject guard in guardArray) 
+                {
+                    Transform guardTrans = guard.transform;
+                    guardObjTransPairs.Add(guard, guardTrans);
+                } 
+            }
+            else
+                print("No GameObjects with the tag of 'Guard' found in scene.");
         }
 
         public void UpdateGuardRefs(GameObject guardRef, bool addOrRemove)
@@ -157,11 +172,7 @@ namespace Cali
 
         public void UpdateNavMeshesCall()
         {
-            foreach (GameObject guardRef in guardObjTransPairs.Keys)
-            {
-                NavMeshAgent attachedNav = guardObjTransPairs[guardRef].GetComponent<NavMeshAgent>();
-                attachedNav.SetDestination(attachedNav.destination);
-            }
+            
         }
     }
 }

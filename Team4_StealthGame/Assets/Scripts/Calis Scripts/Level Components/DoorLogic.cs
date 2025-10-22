@@ -60,13 +60,11 @@ public class DoorLogic : Door
     public DoorType currentDoorState { get; private set; }
 
     private LevelManager levelManager;
-    [SerializeField] public DoorType currentDoorState { get; private set; }
     [SerializeField] public NavMeshObstacle attachedMeshObstacle;
 
     public UnityAction lockdownToggle;
     public DoorType storedDoorState;
     private DoorBools doorInteractivity;
-    private Collider attachedCollider;
 
     [Header("Player Interaction")]
     public Collider attachedCollider;
