@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Cali
 {
-    public class Room : MonoBehaviour
     {
         Room thisRoom;
 

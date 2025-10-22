@@ -36,7 +36,7 @@ public enum DoorType
 
 public class Door : MonoBehaviour
 {
-    [SerializeField] public DoorType doorState { get; private set; }
+    public DoorType doorState;
 
     public Door()
     {
