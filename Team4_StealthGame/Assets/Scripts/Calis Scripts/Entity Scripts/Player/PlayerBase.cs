@@ -1,22 +1,25 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
-public class PlayerBase : MonoBehaviour
+namespace Cali
 {
-    [SerializeField] PlayerStats playerStatsRef;
-    [SerializeField] bool isTrespassing;
-
-    /// <summary>
-    /// Should guards be alerted by hearing/seeing this player?
-    /// </summary>
-    public bool IsTrespassing
+    public class PlayerBase : MonoBehaviour
     {
-        get { return isTrespassing; } 
-        set { isTrespassing = value; }
-    }
+        [SerializeField] PlayerStats playerStatsRef;
+        [SerializeField] bool isTrespassing;
 
-    public PlayerBase()
-    {
+        /// <summary>
+        /// Should guards be alerted by hearing/seeing this player?
+        /// </summary>
+        public bool IsTrespassing
+        {
+            get { return isTrespassing; }
+            set { isTrespassing = value; }
+        }
 
+        public PlayerBase()
+        {
+
+        }
     }
 }

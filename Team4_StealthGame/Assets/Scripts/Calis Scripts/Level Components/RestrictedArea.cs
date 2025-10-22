@@ -1,3 +1,4 @@
+using Cali;
 using UnityEngine;
 
 public class RestrictedArea : MonoBehaviour
