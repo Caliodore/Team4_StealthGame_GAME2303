@@ -203,6 +203,11 @@ namespace Cali
             }
         }
         
+        /// <summary>
+        /// Call to send a guard to a specific location, using a singular GameObject reference.
+        /// </summary>
+        /// <param name="guardRef">GameObject the GuardLogic is attached to.</param>
+        /// <param name="sendToHere">Where the guards should path to.</param>
         public void SendSpecificGuards(GameObject guardRef, Vector3 sendToHere)
         { 
             guardRef.GetComponent<GuardLogic>().ReactToNoise(sendToHere);

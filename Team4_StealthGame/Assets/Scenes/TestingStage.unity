@@ -965,8 +965,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523159791}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.30370829, y: 0.5117904, z: -0.20123577, w: -0.7780334}
-  m_LocalPosition: {x: 60.9177, y: 28.717209, z: 110.30506}
+  m_LocalRotation: {x: 0.57587415, y: 0.14280136, z: -0.10301015, w: 0.7983519}
+  m_LocalPosition: {x: 38.011925, y: 17.985575, z: 114.0829}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1534,7 +1534,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1027361671}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1592,6 +1592,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1051279185}
+  - component: {fileID: 1051279186}
   m_Layer: 0
   m_Name: DoorPhys
   m_TagString: Untagged
@@ -1616,6 +1617,30 @@ Transform:
   - {fileID: 1789530827}
   m_Father: {fileID: 431744203}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1051279186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051279184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec50f5cf9abbc64f866325d0b761ab4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorMovement
+  pivotHinge: {fileID: 0}
+  swingingRigidbody: {fileID: 0}
+  hingeAnchorObj: {fileID: 1789530826}
+  startPosition: {x: 0, y: 0, z: 0}
+  startRotation: {x: 0, y: 0, z: 0, w: 0}
+  canSwing: 0
+  attachedLogic: {fileID: 0}
+  lockedConstraints: 0
+  normalConstraints: 0
+  testingMode: 0
+  forwardTest: 0
+  relTest: 0
 --- !u!1 &1308770893
 GameObject:
   m_ObjectHideFlags: 0
@@ -1912,8 +1937,9 @@ GameObject:
   - component: {fileID: 1789530830}
   - component: {fileID: 1789530829}
   - component: {fileID: 1789530828}
+  - component: {fileID: 1789530832}
   m_Layer: 0
-  m_Name: Hinge
+  m_Name: HingeAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1991,7 +2017,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1789530826}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2040,6 +2066,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1789530826}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1789530832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789530826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c27de8b559d5f384f8712d5b5b3079fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HingeFlag
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

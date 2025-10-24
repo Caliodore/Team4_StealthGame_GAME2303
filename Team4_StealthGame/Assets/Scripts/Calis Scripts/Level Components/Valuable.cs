@@ -1,4 +1,6 @@
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Valuable
 {
@@ -9,10 +11,29 @@ public class Valuable
         Target = 2,
     }
 
-    ValuableTyping valType;
+    private string valTypeName;
+    public string ValTypeName
+    {
+        get { return valTypeName; }    
+    }
 
-    public Valuable()
+    private ValuableTyping valType;
+    public ValuableTyping ValType
     { 
-        valType = 0;
+        get { return valType; }    
+    }
+
+    public int ValInt
+    { 
+        get { return (int)valType; }
+    }
+
+    public Valuable(ValuableTyping valType)
+    {
+        this.valType = valType;
+        if((int)valType == 2)
+        { 
+            valTypeName = new string("Target");
+        }
     }
 }

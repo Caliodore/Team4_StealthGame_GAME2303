@@ -29,20 +29,6 @@ public class LevelManager : MonoBehaviour
     /* Notes/Ideas:
     * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
     */
-        
-    /* Universal Dictionary Concept: (Very Rough, just needed to write it out of my head cuz I kept thinking about it)
-    * Dictionary<GameObject, struct>
-    * struct could contain:
-    *      -Transform attachedTransform
-    *          -Vector3 positionOfObject
-    *              -bool doesNotMove
-    *      -List<MonoBehaviour> attachedScripts
-    *      -bool hasChildren
-    *          -List<GameObject> childrenObjects
-    *      -List<UnityEvent> attachedEvents
-    *      
-    * Could have variety of methods/overrides to account for things like Rooms or Players or Guards that have children objects.
-    */
 
     [Header("Interactions")]
     [SerializeField] UnityEvent toggleLockdown;
@@ -58,7 +44,7 @@ public class LevelManager : MonoBehaviour
 
     [Header("Valuable Collections")]    
     [SerializeField] List<GameObject> valuableList;
-    [SerializeField] Dictionary<GameObject, int> valuableTypeRef;
+    [SerializeField] Dictionary<int, GameObject> valuableTypeRef;
     [SerializeField] Dictionary<GameObject, Vector3> valuablePosRef;
 
     [Header("Exit Collections")]
@@ -88,7 +74,7 @@ public class LevelManager : MonoBehaviour
         doorStateRef = new Dictionary<GameObject, DoorType>();
         doorPosRef = new Dictionary<GameObject, Vector3>();
         roomDoorsRef = new Dictionary<GameObject, GameObject>();
-        valuableTypeRef = new Dictionary<GameObject, int>();
+        valuableTypeRef = new Dictionary<int, GameObject>();
         valuablePosRef = new Dictionary<GameObject, Vector3>();
         exitTypeRef = new Dictionary<GameObject, int>();
         exitPosRef = new Dictionary<GameObject, Vector3>();
@@ -165,6 +151,7 @@ public class LevelManager : MonoBehaviour
 
     private void ValuableCollectionGeneration()
     {
+        bool foundTarget = false;
         int iCount = 0;
         GameObject[] valuableArray = GameObject.FindGameObjectsWithTag("Valuable");
 
@@ -177,9 +164,13 @@ public class LevelManager : MonoBehaviour
         valuableList = valuableArray.ToList();
         foreach(GameObject currentEntry in valuableList)
         { 
-            int valInt = 0;
-            if(currentEntry)
-            valuableTypeRef.Add(currentEntry, valInt);
+            Valuable attachedScript = currentEntry.GetComponent<Valuable>();
+            int valInt = attachedScript.ValInt;
+            if((valInt == 2) && foundTarget)
+                Destroy(currentEntry);
+            else if((valInt == 2) && !foundTarget)
+                foundTarget = true;
+            valuableTypeRef.Add(valInt, currentEntry);
             valuablePosRef.Add(currentEntry, currentEntry.transform.position);
             iCount++;
         }
@@ -200,8 +191,8 @@ public class LevelManager : MonoBehaviour
         exitList = exitArray.ToList();
         foreach(GameObject currentEntry in exitList)
         { 
-            int valInt = 0;
-            if(currentEntry)
+            Exit attachedScript = currentEntry.GetComponent<Exit>();
+            int valInt = attachedScript.ExitInt;
             exitTypeRef.Add(currentEntry, valInt);
             exitPosRef.Add(currentEntry, currentEntry.transform.position);
             iCount++;
@@ -242,6 +233,7 @@ public class LevelManager : MonoBehaviour
             {
                 toggleLockdown.RemoveListener(doorRef.GetComponent<DoorLogic>().lockdownToggle);
                 doorStateRef.Remove(doorRef);
+                print($"DoorRef {doorRef.name} has been removed from LevelManager's DoorReferences.");
             }
         }
         else

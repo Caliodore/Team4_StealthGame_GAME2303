@@ -13,7 +13,7 @@ namespace Cali
 
     public struct DoorBools
     {  
-        public bool collisionEnabled { get; private set; }
+        public bool freeSwinging { get; private set; }
         public bool isSuspicious { get; private set; }
         public bool isInteractable { get; private set; }
         public bool blocksGuardPathing { get; private set; }
@@ -27,7 +27,7 @@ namespace Cali
         /// <param name="blocksGuardPathing">Whether or not the attached NavMeshObstacle is active or not.</param>
         public DoorBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
         { 
-            this.collisionEnabled = collisionEnabled;
+            this.freeSwinging = collisionEnabled;
             this.isSuspicious = isSuspicious;
             this.isInteractable = isInteractable;
             this.blocksGuardPathing = blocksGuardPathing;
@@ -42,7 +42,7 @@ namespace Cali
         /// <param name="blocksGuardPathing">Whether or not the attached NavMeshObstacle is active or not.</param>
         public void SetBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
         { 
-            this.collisionEnabled = collisionEnabled;
+            this.freeSwinging = collisionEnabled;
             this.isSuspicious = isSuspicious;
             this.isInteractable = isInteractable;
             this.blocksGuardPathing = blocksGuardPathing;
@@ -50,7 +50,7 @@ namespace Cali
 
         public override string ToString()
         {
-            return new string($"{collisionEnabled.ToString()}, {isSuspicious.ToString()}, {isInteractable.ToString()}, {blocksGuardPathing.ToString()}");
+            return new string($"{freeSwinging.ToString()}, {isSuspicious.ToString()}, {isInteractable.ToString()}, {blocksGuardPathing.ToString()}");
         }
     }
 
@@ -69,6 +69,7 @@ namespace Cali
         [Header("Player Interaction")]
         public Collider attachedCollider;
         public Collider lastPlayerCollided;
+        public DoorMovement lockChildScript;
         public List<Collider> playersInCollider;
         public List<Collider> guardSensorsInCollider;
         public string playerTag;
@@ -76,6 +77,7 @@ namespace Cali
         private void Awake()
         {
             attachedCollider = this.gameObject.GetComponent<Collider>();
+            lockChildScript = GetComponentInChildren<DoorMovement>();
             doorPosition = gameObject.transform.position;
             lockdownToggle += LockdownToggle;
             playerTag = FindAnyObjectByType<PlayerLogic>().tag;
@@ -168,13 +170,13 @@ namespace Cali
         /// </summary>
         private void UpdateDoorComponents()
         {
-            if(doorInteractivity.collisionEnabled)
+            if(doorInteractivity.freeSwinging)
             {
-                attachedCollider.enabled = true;
+                lockChildScript.ToggleDoorSwinging(true);
             }
-            else if(!doorInteractivity.collisionEnabled)
+            else if(!doorInteractivity.freeSwinging)
             { 
-                attachedCollider.enabled = false;
+                lockChildScript.ToggleDoorSwinging(false);
             }
         //------------------------------------------------//
             if(doorInteractivity.isSuspicious)
@@ -233,7 +235,7 @@ namespace Cali
             }
             else
             { 
-                print($"Player cannot interact with this door, it is: {currentDoorState}");    
+                print($"Player cannot interact with this door, it is: {currentDoorState}. This code should be unreachable in normal gameplay.");    
             }
         }
 
@@ -250,7 +252,7 @@ namespace Cali
             }
             else
             { 
-                print("Player cannot interact with this door, this code should've been unreachable.");
+                print($"Player cannot interact with this door. They are in {gameObject.name}'s range and attempting to interact when it is {currentDoorState}.");
                 return;
             }
         }
@@ -342,7 +344,11 @@ namespace Cali
             { 
                 ChangeDoorState(storedDoorState);
             }
-        
+        }
+
+        private void OnDestroy()
+        {
+            levelManager.DoorStateUpdate(gameObject, DoorType.Destroyed);
         }
     } 
 }
