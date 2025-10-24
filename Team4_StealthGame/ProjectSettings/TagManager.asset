@@ -7,6 +7,8 @@ TagManager:
   - Door
   - Valuable
   - Exit
+  - Room
+  - RestrictedArea
   layers:
   - Default
   - TransparentFX

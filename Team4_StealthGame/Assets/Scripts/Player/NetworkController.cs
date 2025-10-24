@@ -37,7 +37,7 @@ public class NetworkController : NetworkBehaviour
 
     private void Awake()
     {
-
+        gunHold = gameObject.GetComponentInChildren<Transform>();
     }
 
     // Start is called before the first frame update
@@ -48,7 +48,10 @@ public class NetworkController : NetworkBehaviour
 
         // start with a gun
         if (initialGun != null)
-            AddGun(initialGun);
+        {
+            Gun newGun = Instantiate(initialGun, gunHold);
+            AddGun(newGun);
+        }
 
         origin = transform.position;
     }
@@ -88,7 +91,7 @@ public class NetworkController : NetworkBehaviour
     void Movement()
     {
 
-        Debug.Log("moving...");
+        //Debug.Log("moving...");
 
         grounded = controller.isGrounded;
 
@@ -123,7 +126,7 @@ public class NetworkController : NetworkBehaviour
     public void OnLook(InputValue v)
     {
         lookInput = v.Get<Vector2>();
-        print("OnLook Called!");
+        //print("OnLook Called!");
     }
 
     void OnScrollWheel(InputValue v)

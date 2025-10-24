@@ -17,27 +17,26 @@ public enum DoorType
 /// <summary>
 /// Struct for the interactivity of a door, and whether it draws guards' attention.
 /// </summary>
-public struct DoorInteractivity
+/*public struct DoorInteractivity
 { 
+    public bool interactivityState { get; private set; }
+    public bool suspiciousBool { get; private set; }
     public DoorInteractivity(bool canInteract, bool isSus)
     { 
         interactivityState = canInteract;
         suspiciousBool = isSus;
     }
 
-    public bool interactivityState { get; private set; }
-    public bool suspiciousBool { get; private set; }
-
     public void BoolSet(bool intChange, bool susChange)
     { 
         interactivityState = intChange;
         suspiciousBool = susChange;
     }
-}
+}*/
 
 public class Door : MonoBehaviour
 {
-    [SerializeField] public DoorType doorState { get; private set; }
+    public DoorType doorState;
 
     public Door()
     {

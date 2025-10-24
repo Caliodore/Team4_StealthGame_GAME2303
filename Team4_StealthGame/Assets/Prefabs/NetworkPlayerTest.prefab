@@ -44,7 +44,8 @@ GameObject:
   - component: {fileID: 2557256737255748943}
   - component: {fileID: 3313377117769867621}
   - component: {fileID: 3871067565803761797}
-  - component: {fileID: 1125558273691082326}
+  - component: {fileID: -4498850596783419724}
+  - component: {fileID: 625320737847231728}
   - component: {fileID: 2759436388558794834}
   m_Layer: 0
   m_Name: NetworkPlayerTest
@@ -173,7 +174,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1125558273691082326
+--- !u!114 &-4498850596783419724
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,14 +183,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 4816408728764777165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96d891fd22e55e046ab63fdf2c979f80, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Controller
-  gunHold: {fileID: 8577700627370357781}
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 4271522689
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &625320737847231728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816408728764777165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d405e094e202b9d4da8e96ff4644bc68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkController
+  ShowTopMostFoldoutHeaderGroup: 1
+  gunHold: {fileID: 0}
   initialGun: {fileID: 7111535178207495634, guid: e014d31795a64d7449b44672040f4431, type: 3}
-  movementSpeed: 7
-  lookSensitivityX: 5
-  lookSensitivityY: 5
+  movementSpeed: 2
+  lookSensitivityX: 1
+  lookSensitivityY: 1
   gravity: -9.81
   jumpForce: 10
 --- !u!114 &2759436388558794834

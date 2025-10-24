@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEditor.Build.Content;
+using Cali;
 
 // This script will trigger/call events from the LevelManager and the GuardManager depending on the alartness level and other minor events
 // No other script should call anything from this script
@@ -52,6 +53,10 @@ public class DirectorAI : MonoBehaviour
         else if (alertnessL >= 75 && alertnessL < 100)
         {
             alertness = Alertness.Lockdown;
+        }
+        else if (alertnessL < 0 || alertnessL >= 100)
+        { 
+            print($"Alertness is out of range. Current Value: {alertnessL}");    
         }
     }
 
