@@ -56,6 +56,7 @@ namespace Cali
         private bool unawareOfPlayers = true;
         private bool currentlySearchingForPlayers = false;
         private int currentlyActiveGuards = 0;
+        private float hearingDistance;
 
         //----Property Setting-----//
         [SerializeField] public bool AlarmActive
@@ -79,6 +80,7 @@ namespace Cali
         private void Awake()
         {
             currentlyActiveGuards = FindObjectsByType<GuardLogic>(FindObjectsSortMode.None).Count();
+            hearingDistance = FindAnyObjectByType<Sensor>().GetComponent<SphereCollider>().radius;
             GenerateRefs();
         }
 
@@ -148,31 +150,62 @@ namespace Cali
         /// <param name="sendToHere">Where was the distraction source?</param>
         public void GetNearestGuards(int amountOfGuards, Vector3 sendToHere)
         {
-            Dictionary<float, GameObject> relativePositions = new Dictionary<float, GameObject>();
-            float[] distances = new float[currentlyActiveGuards];
+            bool furthestGuardReached = false;
+            bool isGuardInRange = false;
+            float currentGuardDis = 0;
+            int dictIteration = 0;
+            Dictionary<float, GameObject> relativePositions = new Dictionary<float, GameObject>();  //Make a dictionary linking a guard to a distance calc
+            float[] distances = new float[currentlyActiveGuards];                                   //Make an array of those distances
+            List<GameObject> guardsInRange = new List<GameObject>();
             relativePositions.Clear();
 
-            foreach (KeyValuePair<GameObject, Transform> guardTransformRef in guardObjTransPairs)
+            foreach (KeyValuePair<GameObject, Transform> guardTransformRef in guardObjTransPairs)   //Iterate through the dictionary 
             {
-                var relDis = Vector3.Distance(guardTransformRef.Value.position, sendToHere);
-                relativePositions.Add(relDis, guardTransformRef.Key);
+                var relDis = Vector3.Distance(guardTransformRef.Value.position, sendToHere);        //Calculate a distance between the input position and the guard's position.
+                relDis = Mathf.Abs(relDis);                                                         //Probably redundant AbsValue but better safe than sorry.
+                isGuardInRange = relDis <= hearingDistance;
+                if(isGuardInRange)                                                                  //If guard IS in range, then add to array and dict
+                {
+                    relativePositions.Add(relDis, guardTransformRef.Key);                           //Add that calc to the array and dictionary
+                    distances[dictIteration] = relDis;                                                  
+                    dictIteration++;
+                }
             }
 
-            Array.Sort(distances);
+            if(distances.Length <= 0)
+            { 
+                return;    
+            }
 
+            Array.Sort(distances);      //Sort the distances so we can find the nearest x guards.
+                
+            bool guardsSent = false;
+            
             for (int i = 0; i < amountOfGuards; i++)
             {
-                relativePositions.TryGetValue(distances[i], out GameObject guardRef);
-                if (guardRef != null)
-                {
-                    //Get whichever movement script is associated with guardRef GameObject and call the public method to investigate the sendToHere position.
+                currentGuardDis = distances[i];
+                furthestGuardReached = ((currentGuardDis > hearingDistance) || (currentGuardDis == 0)); //Bool to check each loop if the distance is further than the guards hearing radius.
+                if(!furthestGuardReached)
+                { 
+                    relativePositions.TryGetValue(currentGuardDis, out GameObject guardRef);            //Double-check that the dict isn't messing up and actually has the guardRef hooked to a distance.
+                    if (guardRef != null)
+                    {
+                        isGuardInRange = true;
+                        guardsSent = true;
+                        guardRef.GetComponent<GuardLogic>().ReactToNoise(sendToHere);
+                    }
+                }
+                else if(!guardsSent && furthestGuardReached)
+                { 
+                    isGuardInRange = false;
+                    return;
                 }
             }
         }
-
-        public void UpdateNavMeshesCall()
-        {
-            
+        
+        public void SendSpecificGuards(GameObject guardRef, Vector3 sendToHere)
+        { 
+            guardRef.GetComponent<GuardLogic>().ReactToNoise(sendToHere);
         }
     }
 }

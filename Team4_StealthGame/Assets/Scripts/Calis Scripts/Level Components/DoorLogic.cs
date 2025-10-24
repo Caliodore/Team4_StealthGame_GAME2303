@@ -59,6 +59,7 @@ namespace Cali
         public DoorType currentDoorState { get; private set; }
         [SerializeField] NavMeshObstacle attachedMeshObstacle;
         public UnityAction lockdownToggle;
+        public UnityEvent playerFailsInteraction;
         public DoorType storedDoorState;
 
         private LevelManager levelManager;
@@ -69,6 +70,7 @@ namespace Cali
         public Collider attachedCollider;
         public Collider lastPlayerCollided;
         public List<Collider> playersInCollider;
+        public List<Collider> guardSensorsInCollider;
         public string playerTag;
 
         private void Awake()
@@ -196,12 +198,10 @@ namespace Cali
             if(doorInteractivity.blocksGuardPathing)
             { 
                 attachedMeshObstacle.enabled = true;
-                levelManager.UpdateObstacleReferences();
             }
             else if(!doorInteractivity.blocksGuardPathing)
             { 
                 attachedMeshObstacle.enabled = true;
-                levelManager.UpdateObstacleReferences();
             }
         }
 
@@ -268,7 +268,8 @@ namespace Cali
             }
             if(!interactingPlayer.playerInteracting && !interactingPlayer.interactionTimerDone)
             { 
-                //Depending on the DoorType we could sound an alarm or make a noise if they interrupt their action.    
+                //Depending on the DoorType we could sound an alarm or make a noise if they interrupt their action.
+                playerFailsInteraction?.Invoke();
             }
             yield return null;
         }
@@ -290,6 +291,16 @@ namespace Cali
                     playerEntering.isDoorListening = true;
                 }
             }
+            else if(other.name == "Sensor")
+            {
+                GuardLogic guardScript = other.GetComponent<GuardLogic>();
+                bool guardAlreadyTracked = guardSensorsInCollider.Contains(other);
+                if(!guardAlreadyTracked)
+                { 
+                    guardSensorsInCollider.Add(other);
+                    playerFailsInteraction.AddListener(() => levelManager.CallGuard(guardScript.gameObject, doorPosition));
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -305,6 +316,15 @@ namespace Cali
                 }
                 playerLeaving.playerAttemptInteract.RemoveListener(() => DoorInteractBuffer(playerLeaving));
                 playerLeaving.isDoorListening = false;
+            }
+            else if(other.name == "Sensor")
+            { 
+                GuardLogic guardScript = other.GetComponent<GuardLogic>();
+                bool guardNoLongerTracked = guardSensorsInCollider.Remove(other);
+                if(guardNoLongerTracked)
+                { 
+                    playerFailsInteraction.RemoveListener(() => levelManager.CallGuard(guardScript.gameObject, doorPosition));                    
+                }
             }
         }
 

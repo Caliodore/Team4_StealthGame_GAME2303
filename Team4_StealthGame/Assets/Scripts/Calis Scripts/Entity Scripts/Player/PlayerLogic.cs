@@ -29,7 +29,6 @@ namespace Cali
         [Header("Internal Vars")]
         public string restrictedAreaTag;
         public List<string> tagRefs;
-        private DoorType desiredDoorState;
 
         private void Awake()
         {
@@ -72,7 +71,7 @@ namespace Cali
                     break;
 
                 case 1:        //Valuable
-
+                    //Call whatever method updates the loot counter and destroys the reference object/sets it inactive.
                     break;
 
                 case 2:        //Exit
@@ -80,39 +79,47 @@ namespace Cali
                     break;
 
                 case 3:        //Room
-
+                    //Maybe we could have a public property that is a string of what room the player is in?
                     break;
 
                 case 4:        //RestrictedArea
-
+                    TrespassingToggle(enterOrExit);
                     break;
 
-                case 5:
+                case 5:         //(Empty for expansion)
 
                     break;
             }
         }
 
-        public void TrespassingToggle()
+        public void TrespassingToggle(bool enterOrLeave)
         {
-            playerInst.IsTrespassing = !playerInst.IsTrespassing;
-        }
+            if(enterOrLeave)
+                playerInst.IsTrespassing = true;
+            else
+                playerInst.IsTrespassing = false;
+        }   
 
         private void OnTriggerEnter(Collider other)
         {
             string colliderEnterTag = other.tag;
             lastCollidedObj = other.gameObject;
             TagBasedSwitch(colliderEnterTag, true);
-            if (colliderEnterTag == restrictedAreaTag)
-                TrespassingToggle();
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            string colliderEnterTag = other.tag;
+            if(other.CompareTag(restrictedAreaTag) && !IsTrespassing)
+            { 
+                TrespassingToggle(true);    
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
             string colliderExitTag = other.tag;
             TagBasedSwitch(colliderExitTag, false);
-            if (colliderExitTag == restrictedAreaTag)
-                TrespassingToggle();
         }
 
         public void OnInteract(InputAction.CallbackContext ctx)
@@ -148,7 +155,7 @@ namespace Cali
             else if(interactionTimerDone)
             { 
                 print("Player finished interaction.");
-                //Then call whatever method will do the interaction.
+                //The DoorLogic handles the outcome of the interaction. These are mainly here for debugging/expansion.
             }
             yield return null;
         }

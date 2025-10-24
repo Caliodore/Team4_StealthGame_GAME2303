@@ -27,8 +27,22 @@ public class LevelManager : MonoBehaviour
     */
 
     /* Notes/Ideas:
-     * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
-     */
+    * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
+    */
+        
+    /* Universal Dictionary Concept: (Very Rough, just needed to write it out of my head cuz I kept thinking about it)
+    * Dictionary<GameObject, struct>
+    * struct could contain:
+    *      -Transform attachedTransform
+    *          -Vector3 positionOfObject
+    *              -bool doesNotMove
+    *      -List<MonoBehaviour> attachedScripts
+    *      -bool hasChildren
+    *          -List<GameObject> childrenObjects
+    *      -List<UnityEvent> attachedEvents
+    *      
+    * Could have variety of methods/overrides to account for things like Rooms or Players or Guards that have children objects.
+    */
 
     [Header("Interactions")]
     [SerializeField] UnityEvent toggleLockdown;
@@ -58,9 +72,32 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        playerObjTransColl = new Dictionary<GameObject, Transform>();
-        lockdownActive = false;
+        LocalRefGeneration();
         GenerateCollections();
+    }
+
+    private void LocalRefGeneration()
+    {
+        //------------------Components-----------------//
+        //----------------------X----------------------//
+        //--------------------Lists--------------------//
+        doorList = new List<GameObject>();
+        valuableList = new List<GameObject>();
+        exitList = new List<GameObject>();
+        //-----------------Dictionaries----------------//
+        doorStateRef = new Dictionary<GameObject, DoorType>();
+        doorPosRef = new Dictionary<GameObject, Vector3>();
+        roomDoorsRef = new Dictionary<GameObject, GameObject>();
+        valuableTypeRef = new Dictionary<GameObject, int>();
+        valuablePosRef = new Dictionary<GameObject, Vector3>();
+        exitTypeRef = new Dictionary<GameObject, int>();
+        exitPosRef = new Dictionary<GameObject, Vector3>();
+        playerObjTransColl = new Dictionary<GameObject, Transform>();
+        //-------------------Booleans------------------//
+        lockdownActive = false; 
+        //--------------------Events-------------------//
+        toggleLockdown = new UnityEvent();
+        
     }
 
     private void GenerateCollections()
@@ -70,6 +107,7 @@ public class LevelManager : MonoBehaviour
         RoomCollectionGeneration();
         ValuableCollectionGeneration();
         ExitCollectionGeneration();
+        InitialPlayerCollection();
         print("Finished generating collections.");
     }
 
@@ -169,6 +207,24 @@ public class LevelManager : MonoBehaviour
             iCount++;
         }
         print($"Finished generating valuables collections in {iCount} iterations.\nValuableStateRef Entries: {exitTypeRef.Keys.Count} Keys and {exitTypeRef.Values.Count} Values.\nValuablePositionRef Entries: {exitPosRef.Keys.Count} Keys and {exitPosRef.Values.Count} Values.");
+    }
+
+    private void InitialPlayerCollection()
+    { 
+        int iCount = 0;
+        GameObject[] playerArray = GameObject.FindGameObjectsWithTag("Player");
+
+        if(playerArray.Length == 0)
+        { 
+            print("No doors found.");
+            return;
+        }
+        foreach(GameObject currentEntry in playerArray)
+        {
+            PlayerCollectionUpdate(currentEntry, true);
+            iCount++;
+        }
+        print($"Finished generating player collection in {iCount} iterations.\nPlayerRef Entries: {playerObjTransColl.Keys.Count} Keys and {playerObjTransColl.Values.Count} Values.");
     }
 
     /// <summary>
@@ -274,15 +330,17 @@ public class LevelManager : MonoBehaviour
     /// <param name="lockdownStatus">T = ACTIVATE LOCKDOWN || F = RELEASE LOCKDOWN</param>
     public void LockdownHandler()
     {
+        lockdownActive = !lockdownActive;
         toggleLockdown.Invoke();
     }
 
     /// <summary>
-    /// Mainly for the GuardManager to update references to NavMeshObstacles. Individual guards can handle the pathing.
+    /// A method mainly to be added to as a listener for players failing an interaction.
+    /// To be invoked by door scripts to communicate to GuardManager.
     /// </summary>
-    public void UpdateObstacleReferences()
-    {
-        guardManager.UpdateNavMeshesCall();
+    public void CallGuard(GameObject guardRef, Vector3 doorPos)
+    { 
+        guardManager.SendSpecificGuards(guardRef, doorPos);
     }
 }
 }
