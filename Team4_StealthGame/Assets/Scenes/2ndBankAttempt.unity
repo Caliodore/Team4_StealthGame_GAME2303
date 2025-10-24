@@ -6096,6 +6096,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 6008500379639797209, guid: c1a7948b141a0644fa954c6ab0db9454, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6586383053808736981, guid: c1a7948b141a0644fa954c6ab0db9454, type: 3}
       propertyPath: patrolPoints.Array.size
       value: 13
@@ -13214,13 +13218,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 250142632866537430, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 250142632866537430, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 250142632866537430, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4278861503889081784, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
       propertyPath: mainCam
       value: 
       objectReference: {fileID: 1180464482}
     - target: {fileID: 6415096828023087420, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.51931
+      value: -35.51931
       objectReference: {fileID: 0}
     - target: {fileID: 6415096828023087420, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13228,7 +13244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6415096828023087420, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -42.62315
+      value: -12.62315
       objectReference: {fileID: 0}
     - target: {fileID: 6415096828023087420, guid: a7afe82b9b8b4c246bb29ce0fb73f1fa, type: 3}
       propertyPath: m_LocalRotation.w
@@ -58113,7 +58129,7 @@ Transform:
   m_GameObject: {fileID: 1083752557}
   serializedVersion: 2
   m_LocalRotation: {x: 0.6992079, y: -0.0000001399077, z: 0.00000013869908, w: 0.7149185}
-  m_LocalPosition: {x: -0.51931, y: 91.63068, z: -44.62315}
+  m_LocalPosition: {x: -35.51931, y: 91.63068, z: -14.62315}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -63196,7 +63212,7 @@ Transform:
   m_GameObject: {fileID: 1180464480}
   serializedVersion: 2
   m_LocalRotation: {x: 0.6992079, y: -0.00000009792566, z: 0.000000095773714, w: 0.7149184}
-  m_LocalPosition: {x: -0.51931, y: 91.63068, z: -44.62315}
+  m_LocalPosition: {x: -35.51931, y: 91.63068, z: -14.62315}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -107803,10 +107819,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorLogic
   doorState: 0
   attachedMeshObstacle: {fileID: 0}
+  playerFailsInteraction:
+    m_PersistentCalls:
+      m_Calls: []
   storedDoorState: 0
   attachedCollider: {fileID: 0}
   lastPlayerCollided: {fileID: 0}
   playersInCollider: []
+  guardSensorsInCollider: []
   playerTag: 
 --- !u!1 &2069708403 stripped
 GameObject:
