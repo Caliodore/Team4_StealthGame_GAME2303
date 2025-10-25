@@ -14,39 +14,8 @@ namespace Cali
     /// </summary>
     public class GuardManager : MonoBehaviour
     {
-        /*
-         * The purpose of this script is to make referencing groups of guards easier, and to handle determining which guards react to certain events within the game.
-         * Similar to the LevelManager we have dictionaries with cached references to prevent unnecessary GetComponent usage at run-time, caching references early.
-         * GameObject will be the main key used for referencing dictionaries.
-         * When discussing "guards" the intent is to mean the ENTIRE body of guards, not individual guards.
-         * The responses are intended to be when an individual guard communicates to the central guard brain that said event has happened.
-         * 
-         * Concepts this script is intended to handle guards reacting to:
-         * -A body/unconscious person being found.
-         * -Doors being found broken open.
-         * -A weapon laying on the ground.
-         * -A weapon being returned to a guard room.
-         * -Target loot missing from its location (need to make sure we create an object with a script like a Dais or something)
-         * -An unsilenced gun being fired.
-         * -An alarm going off.
-         * 
-         * We will need to decide if we want there to be a central security that will act as a physical brain for the guard system.
-         * If so, we will also need to handle how guards react to it being disabled like communication being cut.
-         * Either way, the general reaction to stimuli will be handled by the individual guards that hear/see something.
-         * We might have guards call on a certain number of other guards to help search an area as a response, and this script will help designate those guards.
-         * 
-         * TL;DR: This script will be a set of references that individual guards or other game objects can call upon to request more guards to go-
-         * -somewhere or do something in response to player actions.
-         */
-
-        /*
-         * Notes/Ideas: 
-         * We can make structs to hold the various bits and bobs of data that are of different types-
-         * -so we only need to reference a single dictionary and not multiple. Not the most necessary but could save some space and be less complex.
-         */
-
         [Header("References to Cache")]
-        [SerializeField] Dictionary<GameObject, Transform> guardObjTransPairs;
+        [SerializeField] Dictionary<GameObject, GuardLogic> guardObjScriptDict;
         [SerializeField] List<Transform> allPatrolPoints;
         [SerializeField] LevelManager levelManager;
         [SerializeField] NetworkManager netManager;
@@ -89,6 +58,9 @@ namespace Cali
             GenerateGuardCollection();
         }
 
+        /// <summary>
+        /// For use within GuardManager to collect all guards within a dictionary and associate them with their transform refs.
+        /// </summary>
         private void GenerateGuardCollection()
         {
             GameObject[] guardArray = GameObject.FindGameObjectsWithTag("Guard");
@@ -96,17 +68,24 @@ namespace Cali
             {
                 foreach (GameObject guard in guardArray) 
                 {
-                    Transform guardTrans = guard.transform;
-                    guardObjTransPairs.Add(guard, guardTrans);
+                    GuardLogic guardTrans = guard.GetComponent<GuardLogic>();
+                    guardObjScriptDict.Add(guard, guardTrans);
                 } 
             }
             else
                 print("No GameObjects with the tag of 'Guard' found in scene.");
         }
 
+        /// <summary>
+        /// Update collections to add/remove guard GameObjects and their associated values.
+        /// Checks if GameObject has GuardLogic attached to it, so make sure the reference is the correct level of inheritance.
+        /// </summary>
+        /// <param name="guardRef">GameObject reference of the guard being altered.</param>
+        /// <param name="addOrRemove">T = ADDING || F = REMOVING</param>
         public void UpdateGuardRefs(GameObject guardRef, bool addOrRemove)
         {
-            bool refFound = guardObjTransPairs.ContainsKey(guardRef);
+            
+            bool refFound = guardObjScriptDict.ContainsKey(guardRef);
             bool isGuard = guardRef.TryGetComponent(out GuardLogic attachedScript);
             if (isGuard)
             {
@@ -114,7 +93,7 @@ namespace Cali
                 {
                     if (!addOrRemove)
                     {
-                        guardObjTransPairs.Remove(guardRef);
+                        guardObjScriptDict.Remove(guardRef);
                     }
                     else if (addOrRemove)
                     {
@@ -126,7 +105,7 @@ namespace Cali
                 {
                     if (addOrRemove)
                     {
-                        guardObjTransPairs.Add(guardRef, guardRef.transform);
+                        guardObjScriptDict.Add(guardRef, guardRef.GetComponent<GuardLogic>());
                     }
                     else if (!addOrRemove)
                     {
@@ -159,9 +138,9 @@ namespace Cali
             List<GameObject> guardsInRange = new List<GameObject>();
             relativePositions.Clear();
 
-            foreach (KeyValuePair<GameObject, Transform> guardTransformRef in guardObjTransPairs)   //Iterate through the dictionary 
+            foreach (KeyValuePair<GameObject, GuardLogic> guardTransformRef in guardObjScriptDict)   //Iterate through the dictionary 
             {
-                var relDis = Vector3.Distance(guardTransformRef.Value.position, sendToHere);        //Calculate a distance between the input position and the guard's position.
+                var relDis = Vector3.Distance(guardTransformRef.Key.transform.position, sendToHere);        //Calculate a distance between the input position and the guard's position.
                 relDis = Mathf.Abs(relDis);                                                         //Probably redundant AbsValue but better safe than sorry.
                 isGuardInRange = relDis <= hearingDistance;
                 if(isGuardInRange)                                                                  //If guard IS in range, then add to array and dict

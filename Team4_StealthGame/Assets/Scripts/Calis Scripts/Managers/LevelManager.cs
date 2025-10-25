@@ -18,18 +18,6 @@ namespace Cali
 /// </summary>
 public class LevelManager : MonoBehaviour
 {
-    /*
-    * Whenever a level is created, this script should create collections for all the physical dynamic components of the level that the director would
-    * want to interact with. Doors, exits, valuables, lockers and their sub-types will be stored here along with caching their positions. The director
-    * will call methods within this script to manipulate the level usually. Example: Director will say seal all electronic doors, telling this script to
-    * run the corresponding method(s). Director says to only close doors closest to lockers, same deal. For closing things close to the players that are
-    * spotted, the director could pass in player positions to a method that determines the closest door and closes them as such.
-    */
-
-    /* Notes/Ideas:
-    * -Have restricted areas handled by a collider that will trigger OnEnter and OnExit to change colliders and suspiciousness bools.
-    */
-
     [Header("Interactions")]
     [SerializeField] UnityEvent toggleLockdown;
     [SerializeField] GuardManager guardManager;
