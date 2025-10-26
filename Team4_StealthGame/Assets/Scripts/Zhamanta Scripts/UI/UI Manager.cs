@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
+using Cali;
 
 
 namespace Testing
@@ -8,13 +10,22 @@ namespace Testing
     public class UIManager : MonoBehaviour
     {
         [SerializeField] PlayerStats playerStats;
+        [SerializeField] PlayerLogic playerLogic;
         [SerializeField] TMP_Text moneyText;
         [SerializeField] TMP_Text alertnessText;
         [SerializeField] Image healthBarImage;
         //[SerializeField] Image jewelImage;
 
+        [SerializeField] Image interactionCircle;
+        [SerializeField] Image failedInteractionCircle;
+
+        private float elapsedInteractionTime;
+
         private void Start()
         {
+            playerLogic = FindFirstObjectByType<PlayerLogic>();
+            interactionCircle.enabled = false;
+            failedInteractionCircle.enabled = false;
             //jewelImage.enabled = false;
         }
 
@@ -44,6 +55,48 @@ namespace Testing
         public void EnableJewelImage() //OnJewelCollected event?
         {
             //jewelImage.enabled = true;
+        }
+
+        public void EnableInteractionCircle()
+        {
+            StartCoroutine(InteractionCircle());
+        }
+
+        public void EnableFailedInteractionCircle()
+        {
+            StartCoroutine(FailedInteractionCircle());
+        }
+
+        IEnumerator InteractionCircle()
+        {
+            interactionCircle.enabled = true;
+            elapsedInteractionTime = 0;
+            while (elapsedInteractionTime < playerLogic.interactTime)
+            {
+                elapsedInteractionTime += Time.deltaTime;
+                interactionCircle.fillAmount = elapsedInteractionTime / playerLogic.interactTime;
+                yield return null;
+            }
+            if (elapsedInteractionTime == playerLogic.interactTime)
+            {
+                if (interactionCircle.enabled)
+                {
+                    interactionCircle.enabled = false;
+                }
+            }
+           
+            yield return null;
+        }
+
+        IEnumerator FailedInteractionCircle() //Called on failedInteraction event
+        {
+            interactionCircle.enabled = false;
+            failedInteractionCircle.enabled = true;
+            float interactionTimeAchieved = elapsedInteractionTime;
+            failedInteractionCircle.fillAmount = interactionTimeAchieved / playerLogic.interactTime;
+            yield return new WaitForSeconds(.5f);
+            failedInteractionCircle.enabled = false;
+            yield return null;
         }
     }
 }
