@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e5c12c254ef124ca8be864ccbfa9ea, type: 3}
   m_Name: GuardStats
   m_EditorClassIdentifier: Assembly-CSharp::GuardStats
+  guardMaxHealth: 5
+  guardSpeed: 2

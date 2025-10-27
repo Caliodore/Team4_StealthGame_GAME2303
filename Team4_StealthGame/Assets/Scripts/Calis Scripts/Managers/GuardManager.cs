@@ -14,6 +14,18 @@ namespace Cali
     /// </summary>
     public class GuardManager : MonoBehaviour
     {
+        /*
+         * ToDo Post-10/26
+         * Zhamanta's Requests:
+         * - Clarification on UpdateGuardRefs and spawning guards
+         *      } Maybe add a separate function to spawn new guards that auto-incorporates UpdateGuardRefs.
+         *      } Could also have it as a part of Awake on the base guard logic script? That way we don't even need the collection generator
+         * - Dictionary clean-up
+         *      } Make a dictionary that puts guards with their base stats.
+         *      } Maybe this could be a use for a struct?
+         * 
+         */
+
         [Header("References to Cache")]
         [SerializeField] Dictionary<GameObject, GuardLogic> guardObjScriptDict;
         [SerializeField] List<Transform> allPatrolPoints;
