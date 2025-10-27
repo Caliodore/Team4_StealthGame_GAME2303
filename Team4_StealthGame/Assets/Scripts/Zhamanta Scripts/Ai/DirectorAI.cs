@@ -90,7 +90,7 @@ public class DirectorAI : MonoBehaviour
 
     IEnumerator LockdownTimer()
     {
-        levelManager.LockdownHandler(); //Lockdown activate
+        levelManager.LockdownHandler(); //Lockdown activate. Does this handler make all doors lock?
 
         float playersHealthTotal = 0;
 
@@ -207,7 +207,7 @@ public class DirectorAI : MonoBehaviour
 
     private void SpecificGuardsToPositions() //Called every now and then through a coroutine that is started in Start()
     {
-        // Problem A: Currently, no way of accessing guards' stats (guards's health in this case), lack of GuardStats SO
+        // Currently, no way of accessing guards' stats (guards's health in this case), lack of GuardStats SO (Problem A)
 
         /*GameObject guardWithMaxHealth = FindFirstObjectByType<GuardLogic>().health = 100;
 
@@ -254,7 +254,7 @@ public class DirectorAI : MonoBehaviour
                 if ((numCurrentGuards + actualNumGuardsToAdd) <= directorOptions.stage1MaxGuards)
                 {
                     //guardManager.AddGuards(guardsToAdd);
-                    //Problem B: I think Cali wants me to use the UpdateGuardRefs for this, but I am not sure how.
+                    //Problem B: I think Cali wants me to use the UpdateGuardRefs to add guards actually, but I am not sure how.
 
                     //Maybe if I had the dictionary I am asking for in Problem A, then I could do...
                     //List<GuardLogic> guardKeys = guardDictionary.Keys.ToList();
