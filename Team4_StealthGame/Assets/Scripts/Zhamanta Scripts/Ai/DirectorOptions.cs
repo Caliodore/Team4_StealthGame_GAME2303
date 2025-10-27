@@ -14,4 +14,7 @@ public class DirectorOptions : ScriptableObject
     public int stage2MaxGuards = 20;
     public int alarmMaxGuards = 30;
     public int lockdownMaxGuards = 40;
+
+    public float guardSpeedAlarmMultiplier = 1.5f;
+    public float guardSpeedLockdownMultiplier = 2f;
 }

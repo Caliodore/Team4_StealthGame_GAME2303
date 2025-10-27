@@ -4,11 +4,14 @@ using System.Collections;
 using UnityEditor.Build.Content;
 using Cali;
 using Unity.VisualScripting;
+using UnityEngine.Events;
 
 // This script will trigger/call events from the LevelManager and the GuardManager depending on the alartness level and other minor events
 // No other script should call anything from this script
 public class DirectorAI : MonoBehaviour
 {
+    [SerializeField] float alertnessRelaxationInterval = 7;
+    float relaxAlertnessElapsedTime = 0;
     private enum Alertness
     {
         Stage1,
@@ -23,7 +26,10 @@ public class DirectorAI : MonoBehaviour
     [SerializeField] DirectorOptions directorOptions;
     [SerializeField] PlayerStats playerStats;
 
-    private Dictionary<PlayerLogic, PlayerStats> playerDictionary = new Dictionary<PlayerLogic, PlayerStats>();
+    private Dictionary<PlayerLogic, PlayerStats> playerDictionary = new Dictionary<PlayerLogic, PlayerStats>(); //I need something similar for guards
+
+    // Events
+    public UnityEvent OnAlertnessStageChange;
 
     private void Awake()
     {
@@ -37,28 +43,94 @@ public class DirectorAI : MonoBehaviour
         guardManager = FindFirstObjectByType<GuardManager>();
     }
 
-    public void StageDeterminant()  //Call when alertnessL gets updated (when IncreaseAlertnessLevel() is called) 
+    private void Start()
+    {
+        StageDeterminant();
+        StartCoroutine(CheckForSpecificBehavior());
+    }
+
+    public void StageDeterminant()  //Call when alertnessL gets updated (when UpdateAlertnessLevel() is called) 
     {
         var alertnessL = AlertnessLevel.alertnessL;
         if (alertnessL >= 0 && alertnessL < 25)
         {
             alertness = Alertness.Stage1;
+            OnAlertnessStageChange.Invoke();
         }
         else if (alertnessL >= 25 && alertnessL < 50)
         {
             alertness = Alertness.Stage2;
+            OnAlertnessStageChange.Invoke();
         }
         else if (alertnessL >= 50 && alertnessL < 75)
         {
             alertness = Alertness.Alarm;
+            OnAlertnessStageChange.Invoke();
         }
         else if (alertnessL >= 75 && alertnessL < 100)
         {
             alertness = Alertness.Lockdown;
+            OnAlertnessStageChange.Invoke();
         }
         else if (alertnessL < 0 || alertnessL >= 100)
         { 
             print($"Alertness is out of range. Current Value: {alertnessL}");    
+        }
+    }
+
+
+    private void Update()
+    {
+        RelaxAlertness();
+    }
+
+    public void LightsBehavior() //Called when invoking OnAlertnessStageChange
+    {
+        if (alertness == Alertness.Alarm)
+        {
+
+        }
+        else if (alertness == Alertness.Lockdown)
+        {
+
+        }
+    }
+
+    public void RelaxAlertness()
+    {
+        if (guardManager.UnawareOfPlayers)
+        {
+            while (relaxAlertnessElapsedTime != alertnessRelaxationInterval)
+            {
+                relaxAlertnessElapsedTime += Time.deltaTime;
+            }
+            if (relaxAlertnessElapsedTime == alertnessRelaxationInterval)
+            {
+                AlertnessLevel.UpdateAlertnessLevel(-1);
+                relaxAlertnessElapsedTime = 0;
+            }
+        }
+    }
+
+    public void ChangeGuardSpeeds() //Called when invoking OnAlertnessStageChange
+    {
+        if (guardManager.SearchingForPlayers)
+        {
+            if (alertness == Alertness.Stage1 || alertness == Alertness.Stage2)
+            {
+                //ProblemB
+                //Iterate through guards to change their speed to the GuardStats SO original speed
+            }
+            else if (alertness == Alertness.Alarm)
+            {
+                //ProblemB
+                //guardsSpeed *= directorOptions.guardSpeedAlarmMultiplier;
+            }
+            else if (alertness == Alertness.Lockdown)
+            {
+                //ProblemB
+                //guardsSpeed *= directorOptions.guardSpeedLockdownMultiplier;
+            }
         }
     }
 
@@ -83,23 +155,44 @@ public class DirectorAI : MonoBehaviour
         }
     }
 
-    private void SpecificGuardsToPosition()
+    private void SpecificGuardsToPositions() //Called every now and then through a coroutine that is started in Start()
     {
+        // Problem B: Currently, no way of accessing guards' stats (guards's health in this case), lack of GuardStats SO
+
         /*GameObject guardWithMaxHealth = FindFirstObjectByType<GuardLogic>().health = 100;
 
-        if (levelManager.foundJewel)
+        if (levelManager.jewelStolen)
         {
             guardManager.SendSpecificGuards(guardWithMaxHealth, levelManager.GetJewelTransform());
         }*/
 
-        if (alertness == Alertness.Stage2 && playerStats.health == 100)
+        if (alertness == Alertness.Stage2)
         {
-            
+            foreach (KeyValuePair<PlayerLogic, PlayerStats> pair in playerDictionary)
+            {
+                PlayerLogic player = pair.Key;
+                PlayerStats playerStats = pair.Value;
+
+                if (alertness == Alertness.Stage2 && playerStats.health == 100)
+                {
+                    //Also send a few full health guards to player, but I need to access guard health somehow
+                    //Problem B
+                }
+            }
+        }
+    }
+
+    IEnumerator CheckForSpecificBehavior()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(20f);
+            SpecificGuardsToPositions();
         }
     }
 
 
-    public void GuardAmountRegulator() //Call when alertnessL gets updated (when IncreaseAlertnessLevel() is called)
+    public void GuardAmountRegulator() //Call when alertnessL gets updated (when UpdateAlertnessLevel() is called).  Another option is to simply call it when invoking OnAlertnessStageChange  <<<Let me know which one/your thoughts
     {
         int numCurrentGuards = guardManager.CurrentlyActiveGuards;
         int initialAddValue = GuardsToAdd();

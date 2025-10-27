@@ -32,29 +32,39 @@ namespace Testing
         // Could use UnityActions/Events instead of Update() for optimization
         private void Update()
         {
-            UpdateHealth();
-            UpdateAlertness();
-            UpdateMoneyCount();
+            UpdateHealthBar();
+            UpdateAlertnessText();
+            UpdateMoneyCountText();
         }
-        public void UpdateHealth()
+        public void UpdateHealthBar()
         {
             //healthBarImage.fillAmount = playerStats.currentHealth / playerStats.maxhealth;
             healthBarImage.fillAmount = playerStats.health / 100;
         }
 
-        public void UpdateAlertness()
+        public void UpdateAlertnessText()
         {
             alertnessText.text = "Alertness: " + AlertnessLevel.alertnessL.ToString();
         }
 
-        public void UpdateMoneyCount() //OnMoneyCollected event?
+        public void UpdateMoneyCountText() // Dedicated event
         {
-            //moneyText.text = "Money: " + SomeManager.SomeMoneyVariable.ToString();
+            // Update money text
         }
 
-        public void EnableJewelImage() //OnJewelCollected event?
+        public void EnableJewelImage() // Dedicated event
         {
-            //jewelImage.enabled = true;
+            // Enable Jewel Image
+        }
+
+        public void FlashingRed() // Cannot be called on an event because lerp needs Update(), DirectorAI will call this
+        {
+            // Make screen alternate between light and dark red gradually
+        }
+
+        public void TurnOffLights() // Cannot be called on an event because lerp needs Update(), DirectorAI will call this
+        {
+            // Make screen darker gradually
         }
 
         public void EnableInteractionCircle()
