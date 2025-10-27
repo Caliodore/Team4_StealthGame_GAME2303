@@ -49,7 +49,7 @@ namespace Cali
         private void Awake()
         {
             currentlyActiveGuards = FindObjectsByType<GuardLogic>(FindObjectsSortMode.None).Count();
-            hearingDistance = FindAnyObjectByType<Sensor>().GetComponent<SphereCollider>().radius;
+            hearingDistance = FindAnyObjectByType<Guard_DetectionSensor>().GetComponent<SphereCollider>().radius;
             GenerateRefs();
         }
 

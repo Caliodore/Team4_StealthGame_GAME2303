@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // gun base class
-public class Gun : MonoBehaviour
+public class Gun : Item
 {
-    protected Controller player;
-
-
     // references
     [SerializeField] protected Transform gunBarrelEnd;
     [SerializeField] protected GameObject bulletPrefab;
@@ -37,12 +34,13 @@ public class Gun : MonoBehaviour
     public int GetAmmo() => ammo;
     public int GetMaxAmmo() => maxAmmo;
 
-    public virtual void Equip(Controller p)
+    public override void Equip(Player_Inventory p)
     {
-        player = p;
+        base.Equip(p);
+        p.GetComponent<Player_GunHandler>().enabled = true;
     }
 
-    public virtual void Unequip() { }
+    public override void Unequip() { player.GetComponent<Player_GunHandler>().enabled = false; }
 
     public bool AttemptAutomaticFire()
     {

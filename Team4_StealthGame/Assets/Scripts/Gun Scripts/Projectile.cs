@@ -37,7 +37,7 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var target = other.gameObject.GetComponent<Enemy>();
+        var target = other.gameObject.GetComponent<Guard_StateMachine>();
         if (target != null)
         {
             var direction = GetComponent<Rigidbody>().linearVelocity;
@@ -63,5 +63,5 @@ public class HitData
 {
     public Vector3 location;
     public Vector3 direction;
-    public Enemy target;
+    public Guard_StateMachine target; // NEED TO CHANGE THIS EVENTUALLY
 }

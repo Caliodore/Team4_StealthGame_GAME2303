@@ -13,17 +13,17 @@ public enum enemyStates
     PURSUE
 }
 
-public class Navigator : MonoBehaviour
+public class Guard_StateMachine : MonoBehaviour
 {
     //variables 
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Transform[] patrolPoints;
     [SerializeField] Transform target;
 
-    [SerializeField] HealthSO health;
     [SerializeField] UnityEvent GameOver;
 
-    Controller player;
+    Player_Movement player;
+    Player_Health playerHealth;
     GameManager gameManager;
 
     Transform currentPatrolPoint;
@@ -37,15 +37,15 @@ public class Navigator : MonoBehaviour
     float playerAttackRange = 1;
     float time;
 
-    Sensor sensor;
+    Guard_DetectionSensor sensor;
 
     [SerializeField] LayerMask environmentLayer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        sensor = FindAnyObjectByType<Sensor>();  
-        player = FindAnyObjectByType<Controller>(); 
+        sensor = FindAnyObjectByType<Guard_DetectionSensor>();  
+        player = FindAnyObjectByType<Player_Movement>(); 
         gameManager = FindAnyObjectByType<GameManager>();
         currentPatrolPoint = patrolPoints[0];
         agent.SetDestination(currentPatrolPoint.position);  
@@ -202,7 +202,7 @@ public class Navigator : MonoBehaviour
             if (distance < 1.2f && gameManager.gameOver != true)
             {
                 Debug.Log("ELIMINATED THE PLAYER");
-                health.currentHealth = 0;
+                playerHealth.health = 0;
                 GameOver.Invoke();
                 gameManager.gameOver = true;
             }
@@ -219,5 +219,10 @@ public class Navigator : MonoBehaviour
                 states = enemyStates.INVESTIGATE;
             }
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+
     }
 }

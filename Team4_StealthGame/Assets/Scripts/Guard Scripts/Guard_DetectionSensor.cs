@@ -1,24 +1,24 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Sensor : MonoBehaviour
+public class Guard_DetectionSensor : MonoBehaviour
 {
 
     [SerializeField] UnityEvent<bool, bool, bool> onHeard;
     [SerializeField] UnityEvent<bool> onSight;
-    Controller player;
+    Player_Movement player;
 
     public bool playerInSensor = false;
 
     private void Start()
     {
-      player = FindAnyObjectByType<Controller>();
+      player = FindAnyObjectByType<Player_Movement>();
     }
 
     private void OnTriggerEnter(Collider other)
 
     {
-        if (other.GetComponent<Controller>())
+        if (other.GetComponent<Player_Movement>())
         {
             playerInSensor = true;
         }
@@ -27,7 +27,7 @@ public class Sensor : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<Controller>())
+        if (other.GetComponent<Player_Movement>())
         {
             playerInSensor = false;
             onSight.Invoke(playerInSensor);

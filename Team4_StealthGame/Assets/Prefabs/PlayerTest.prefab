@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8577700627370357781}
   m_Layer: 0
-  m_Name: Gun Holder
+  m_Name: Item Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,6 +45,10 @@ GameObject:
   - component: {fileID: 3313377117769867621}
   - component: {fileID: 3871067565803761797}
   - component: {fileID: 1125558273691082326}
+  - component: {fileID: 3700613184339683660}
+  - component: {fileID: 1895409068746325851}
+  - component: {fileID: -3367905689635112660}
+  - component: {fileID: -7041811291468401158}
   - component: {fileID: 2759436388558794834}
   m_Layer: 0
   m_Name: PlayerTest
@@ -185,15 +189,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d891fd22e55e046ab63fdf2c979f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Controller
-  gunHold: {fileID: 8577700627370357781}
-  initialGun: {fileID: 7111535178207495634, guid: e014d31795a64d7449b44672040f4431, type: 3}
-  health: {fileID: 11400000, guid: 7b8a4f9d86c31ab43ae11c53ffbd2de6, type: 2}
   isMakingSound: 0
   isMoving: 0
   movementSpeed: 10
-  lookSensitivityX: 3
-  lookSensitivityY: 3
   gravity: -9.81
+--- !u!114 &3700613184339683660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816408728764777165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2fdd4fb44304646a2e42bcde294cc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_GunHandler
+--- !u!114 &1895409068746325851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816408728764777165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1032fd3a78b12844fade6e81456249fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Look
+  lookSensitivityX: 1
+  lookSensitivityY: 1
+--- !u!114 &-3367905689635112660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816408728764777165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4034b8b9d567cf04a83319d3f207eea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Health
+  playerHealth: {fileID: 11400000, guid: 7b8a4f9d86c31ab43ae11c53ffbd2de6, type: 2}
+  health: 0
+--- !u!114 &-7041811291468401158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816408728764777165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea6b0ab9d879c874bba724b3077183ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Inventory
+  itemHold: {fileID: 8577700627370357781}
+  initialItem: {fileID: 7111535178207495634, guid: e014d31795a64d7449b44672040f4431, type: 3}
 --- !u!114 &2759436388558794834
 MonoBehaviour:
   m_ObjectHideFlags: 0
