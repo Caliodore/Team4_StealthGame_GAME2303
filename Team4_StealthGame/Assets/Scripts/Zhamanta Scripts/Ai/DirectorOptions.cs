@@ -7,8 +7,8 @@ using UnityEngine;
 // Each level can have its own DirectorOptions
 public class DirectorOptions : ScriptableObject
 {
-    public float lockAllDoorsMinTime = 5f;
-    public float lockAllDoorsMaxTime = 10f;
+    public float lockdownMinTime = 10f;
+    public float lockdownMaxTime = 20f;
 
     public int stage1MaxGuards = 10;
     public int stage2MaxGuards = 20;

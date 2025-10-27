@@ -5,7 +5,7 @@ using System.Collections;
 using Cali;
 
 
-namespace Testing
+namespace Zhamanta
 {
     public class UIManager : MonoBehaviour
     {
@@ -59,12 +59,12 @@ namespace Testing
 
         public void FlashingRed() // Cannot be called on an event because lerp needs Update(), DirectorAI will call this
         {
-            // Make screen alternate between light and dark red gradually
+            // Make screen alternate between light and dark red gradually using lerp
         }
 
         public void TurnOffLights() // Cannot be called on an event because lerp needs Update(), DirectorAI will call this
         {
-            // Make screen darker gradually
+            // Make screen darker gradually using lerp
         }
 
         public void EnableInteractionCircle()
