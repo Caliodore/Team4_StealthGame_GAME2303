@@ -1,3 +1,4 @@
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewDirectorOptions", menuName = "Director/Options")]
@@ -8,4 +9,9 @@ public class DirectorOptions : ScriptableObject
 {
     public float lockAllDoorsMinTime = 5f;
     public float lockAllDoorsMaxTime = 10f;
+
+    public int stage1MaxGuards = 10;
+    public int stage2MaxGuards = 20;
+    public int alarmMaxGuards = 30;
+    public int lockdownMaxGuards = 40;
 }

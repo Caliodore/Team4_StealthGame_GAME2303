@@ -36,13 +36,13 @@ namespace Testing
             UpdateAlertness();
             UpdateMoneyCount();
         }
-        public void UpdateHealth() // Onhurt event?
+        public void UpdateHealth()
         {
             //healthBarImage.fillAmount = playerStats.currentHealth / playerStats.maxhealth;
             healthBarImage.fillAmount = playerStats.health / 100;
         }
 
-        public void UpdateAlertness() // OnAlertnessUpdated event?
+        public void UpdateAlertness()
         {
             alertnessText.text = "Alertness: " + AlertnessLevel.alertnessL.ToString();
         }
@@ -62,7 +62,7 @@ namespace Testing
             StartCoroutine(InteractionCircle());
         }
 
-        public void EnableFailedInteractionCircle()
+        public void EnableFailedInteractionCircle() //Called on failedInteraction event (At Door Logic)
         {
             StartCoroutine(FailedInteractionCircle());
         }
@@ -88,13 +88,15 @@ namespace Testing
             yield return null;
         }
 
-        IEnumerator FailedInteractionCircle() //Called on failedInteraction event
+        IEnumerator FailedInteractionCircle() 
         {
             interactionCircle.enabled = false;
             failedInteractionCircle.enabled = true;
+
             float interactionTimeAchieved = elapsedInteractionTime;
             failedInteractionCircle.fillAmount = interactionTimeAchieved / playerLogic.interactTime;
             yield return new WaitForSeconds(.5f);
+
             failedInteractionCircle.enabled = false;
             yield return null;
         }
