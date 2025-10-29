@@ -1,11 +1,6 @@
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
-
 public enum enemyStates
 {
     PATROL, 
@@ -13,14 +8,11 @@ public enum enemyStates
     PURSUE
 }
 
-public class Guard_StateMachine : MonoBehaviour
+public class Guard_StateMachine : GuardBase
 {
     //variables 
     [SerializeField] NavMeshAgent agent;
-    [SerializeField] Transform[] patrolPoints;
     [SerializeField] Transform target;
-
-    [SerializeField] UnityEvent GameOver;
 
     Player_Movement player;
     Player_Health playerHealth;
@@ -35,7 +27,6 @@ public class Guard_StateMachine : MonoBehaviour
     float visionRadius = 0.8f;
     float timeElapsed;
     float playerAttackRange = 1;
-    float time;
 
     Guard_DetectionSensor sensor;
 
@@ -136,10 +127,7 @@ public class Guard_StateMachine : MonoBehaviour
 
     void Patrol()
     {
-        Debug.Log("PATROL STATE");
         float distance = Vector3.Distance(transform.position, currentPatrolPoint.position);
-
-        time += Time.deltaTime;
       
         if (distance < 2)
         {
@@ -191,7 +179,6 @@ public class Guard_StateMachine : MonoBehaviour
 
     void Pursue()
     {
-        //Debug.Log("PURSUE STATE");
 
         if (playerIsSeen)
         {
@@ -199,13 +186,7 @@ public class Guard_StateMachine : MonoBehaviour
             agent.SetDestination(target.position);
             Debug.Log("PURSUING THE PLAYER");
 
-            if (distance < 1.2f && gameManager.gameOver != true)
-            {
-                Debug.Log("ELIMINATED THE PLAYER");
-                playerHealth.health = 0;
-                GameOver.Invoke();
-                gameManager.gameOver = true;
-            }
+            // going to change some logic here
 
         }
         else

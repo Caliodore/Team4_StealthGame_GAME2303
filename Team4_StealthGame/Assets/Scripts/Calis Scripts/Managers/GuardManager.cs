@@ -12,7 +12,7 @@ namespace Cali
     /// Script for handling guard interactions at scale, individualized guard interactions are handled by GuardLogic.
     /// This determines how the guard body AS A WHOLE interacts, not the individual guards themselves.
     /// </summary>
-    public class GuardManager : MonoBehaviour
+    public class GuardManager : GuardLogic
     {
         [Header("References to Cache")]
         [SerializeField] Dictionary<GameObject, GuardLogic> guardObjScriptDict;
