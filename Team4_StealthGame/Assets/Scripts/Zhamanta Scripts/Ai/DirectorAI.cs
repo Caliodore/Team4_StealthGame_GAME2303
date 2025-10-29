@@ -90,7 +90,7 @@ public class DirectorAI : MonoBehaviour
 
     IEnumerator LockdownTimer()
     {
-        levelManager.LockdownHandler(); //Lockdown activate. Does this handler make all doors lock?
+        levelManager.LockdownHandler(); //Lockdown activate. Does this handler make all doors lock? (Cali: Yes, it should. As doors are added to their dictionary in LevelManager, the toggleLockdown event also adds them as a listener.)
 
         float playersHealthTotal = 0;
 
@@ -136,6 +136,7 @@ public class DirectorAI : MonoBehaviour
     public void LightsBehavior() 
     {
         // Problem C: I do not know why Cali has a getter for an AlarmActive bool in the GuardManager if I already have a stage for it. Please let me know if I am misinterpreting something!
+        // Cali: I was developing it on it's own, because I knew that the alarm would mostly be used by the GuardManager out of all the stuff I was working on. If you would prefer to centralize it here that is ok.
         if (alertness == Alertness.Alarm)
         {
             uiManager.FlashingRed();
@@ -255,6 +256,8 @@ public class DirectorAI : MonoBehaviour
                 {
                     //guardManager.AddGuards(guardsToAdd);
                     //Problem B: I think Cali wants me to use the UpdateGuardRefs to add guards actually, but I am not sure how.
+                    //Cali: The intention of the UpdateGuardRefs is for making sure the dictionary is up to date if guards are added/removed.
+                    //UpdateGuardRefs does not handle adding guards itself.
 
                     //Maybe if I had the dictionary I am asking for in Problem A, then I could do...
                     //List<GuardLogic> guardKeys = guardDictionary.Keys.ToList();

@@ -21,13 +21,13 @@ namespace Cali
         /// <summary>
         /// bools = collisionEnabled, isSuspicious, isInteractable, blocksGuardPathing
         /// </summary>
-        /// <param name="collisionEnabled">Whether or not collision should be enabled.</param>
+        /// <param name="isFreeSwinging">Whether or not collision should be enabled.</param>
         /// <param name="isSuspicious">Whether it draws guards' attention.</param>
         /// <param name="isInteractable">Whether or not the player can interact with it.</param>
         /// <param name="blocksGuardPathing">Whether or not the attached NavMeshObstacle is active or not.</param>
-        public DoorBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
+        public DoorBools(bool isFreeSwinging, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
         { 
-            this.freeSwinging = collisionEnabled;
+            this.freeSwinging = isFreeSwinging;
             this.isSuspicious = isSuspicious;
             this.isInteractable = isInteractable;
             this.blocksGuardPathing = blocksGuardPathing;
@@ -36,13 +36,13 @@ namespace Cali
         /// <summary>
         /// Set states of interactivity for this door.
         /// </summary>
-        /// <param name="collisionEnabled">Whether or not collision should be enabled.</param>
+        /// <param name="isFreeSwinging">Whether or not collision should be enabled.</param>
         /// <param name="isSuspicious">Whether it draws guards' attention.</param>
         /// <param name="isInteractable">Whether or not the player can interact with it.</param>
         /// <param name="blocksGuardPathing">Whether or not the attached NavMeshObstacle is active or not.</param>
-        public void SetBools(bool collisionEnabled, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
+        public void SetBools(bool isFreeSwinging, bool isSuspicious, bool isInteractable, bool blocksGuardPathing)
         { 
-            this.freeSwinging = collisionEnabled;
+            this.freeSwinging = isFreeSwinging;
             this.isSuspicious = isSuspicious;
             this.isInteractable = isInteractable;
             this.blocksGuardPathing = blocksGuardPathing;

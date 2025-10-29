@@ -8,4 +8,10 @@ public class GuardBase : MonoBehaviour
     [SerializeField] public GuardStats guardStatRef;
     [SerializeField] public Transform attachedTransform;
     [SerializeField] public Transform[] patrolPoints;
+
+    private void Awake()
+    {
+        guardStatRef = ScriptableObject.CreateInstance<GuardStats>();
+        attachedTransform = gameObject.GetComponent<Transform>();
+    }
 }

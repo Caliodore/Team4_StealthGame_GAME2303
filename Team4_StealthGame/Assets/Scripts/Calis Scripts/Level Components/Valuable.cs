@@ -28,12 +28,29 @@ public class Valuable
         get { return (int)valType; }
     }
 
-    public Valuable(ValuableTyping valType)
+    private int valPoints;
+    public int ValPoints
+    { 
+        get { return  valPoints; }    
+    }
+
+    public Valuable(ValuableTyping valTypeIn)
     {
-        this.valType = valType;
-        if((int)valType == 2)
+        valType = valTypeIn;
+        switch((int)valType)
         { 
-            valTypeName = new string("Target");
+            case(0):
+                valTypeName = "Coin";
+                valPoints = 1;
+                break;
+            case(1):
+                valTypeName = "Loot";
+                valPoints = 2;
+                break;
+            case(2):
+                valTypeName = "Target";
+                valPoints = 10;
+                break;
         }
     }
 }

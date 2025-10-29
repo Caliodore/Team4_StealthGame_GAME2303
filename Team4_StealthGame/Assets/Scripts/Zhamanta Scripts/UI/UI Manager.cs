@@ -29,7 +29,7 @@ namespace Zhamanta
             //jewelImage.enabled = false;
         }
 
-        // Could use UnityActions/Events instead of Update() for optimization
+        // Could use UnityActions/Events instead of Update() for optimization. Cali: highly agree
         private void Update()
         {
             UpdateHealthBar();
