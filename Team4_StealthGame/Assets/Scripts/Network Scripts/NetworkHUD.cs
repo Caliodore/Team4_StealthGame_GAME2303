@@ -10,12 +10,12 @@ public class NetworkHUD : MonoBehaviour
     [SerializeField] GameObject uiCanvas;
     private void Start()
     {
-        Time.timeScale = 0;
+        Time.timeScale = 1f;
     }
 
     public void StartHost()
     {
-       // NetworkManager.Singleton.StartHost();
+       NetworkManager.Singleton.StartHost();
        JoinButton.SetActive(false);
        HostButton.SetActive(false);
        StartButton.SetActive(true);
@@ -23,7 +23,7 @@ public class NetworkHUD : MonoBehaviour
 
     public void StartClient()
     {
-        // NetworkManager.Singleton.StartClient();
+        NetworkManager.Singleton.StartClient();
         HostButton.SetActive(false);
         JoinButton.SetActive(false);
 
@@ -31,9 +31,8 @@ public class NetworkHUD : MonoBehaviour
 
     public void StartBtnPress()
     {
-        Time.timeScale = 1;
         StartButton.SetActive(false);
         uiCanvas.SetActive(true);
+        Time.timeScale = 1f;
     }
-
 }
