@@ -10,6 +10,10 @@ public class GuardSpawnPoint : MonoBehaviour
     [Header("Individualized Refs")]
     public int spawnPointIndex;
 
+    private void Awake()
+    {
+        guardManager = FindAnyObjectByType<GuardManager>();
+    }
 
     public void SpawnGuard()
     { 

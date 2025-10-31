@@ -10,6 +10,7 @@ TagManager:
   - RestrictedArea
   - Valuable
   - GuardSpawn
+  - PatrolPoint
   layers:
   - Default
   - TransparentFX
