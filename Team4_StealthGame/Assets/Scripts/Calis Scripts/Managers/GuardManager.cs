@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
@@ -29,6 +30,7 @@ namespace Cali
         [Header("References to Cache")]
         [SerializeField] Dictionary<GameObject, GuardLogic> guardObjScriptDict;
         [SerializeField] List<Transform> allPatrolPoints;
+        [SerializeField] List<GuardSpawnPoint> guardSpawnPoints;
         [SerializeField] LevelManager levelManager;
         [SerializeField] NetworkManager netManager;
 
@@ -38,6 +40,8 @@ namespace Cali
         private bool currentlySearchingForPlayers = false;
         private int currentlyActiveGuards = 0;
         private float hearingDistance;
+
+        public bool isPastInit;
 
         //----Property Setting-----//
         [SerializeField] public bool AlarmActive
@@ -60,6 +64,7 @@ namespace Cali
 
         private void Awake()
         {
+            isPastInit = false;
             currentlyActiveGuards = FindObjectsByType<GuardLogic>(FindObjectsSortMode.None).Count();
             hearingDistance = FindAnyObjectByType<Guard_DetectionSensor>().GetComponent<SphereCollider>().radius;
             GenerateRefs();
@@ -68,6 +73,8 @@ namespace Cali
         private void GenerateRefs()
         {
             GenerateGuardCollection();
+            GenerateSpawnPointIndices();
+            isPastInit = true;
         }
 
         /// <summary>
@@ -86,6 +93,26 @@ namespace Cali
             }
             else
                 print("No GameObjects with the tag of 'Guard' found in scene.");
+        }
+
+        /// <summary>
+        /// For GuardManager to call on Awake to generate a list of spawn points for later reference.
+        /// </summary>
+        private void GenerateSpawnPointIndices()
+        {
+            GameObject[] spawnPointArray = GameObject.FindGameObjectsWithTag("GuardSpawn");
+            if(spawnPointArray.Length != 0)
+            {
+                int iterationCount = 0;
+                foreach(GameObject currentSpawn in spawnPointArray)
+                { 
+                    GuardSpawnPoint currentPoint = currentSpawn.GetComponent<GuardSpawnPoint>();
+                    currentPoint.spawnPointIndex = iterationCount;
+                    guardSpawnPoints.Add(currentPoint);
+                }
+            }
+            else
+                print("No GameObjects with the tag of 'GuardSpawn' found in scene.");
         }
 
         /// <summary>
@@ -202,6 +229,59 @@ namespace Cali
         public void SendSpecificGuards(GameObject guardRef, Vector3 sendToHere)
         { 
             guardRef.GetComponent<GuardLogic>().ReactToNoise(sendToHere);
+        }
+
+        /// <summary>
+        /// Spawns x number of guards randomly across the spawn points.
+        /// </summary>
+        /// <param name="amountOfGuards">How many guards to spawn.</param>
+        public void SpawnGuards(int amountOfGuards)
+        { 
+            for(int i = 0; i < amountOfGuards; i++)
+            { 
+                int randIndex = UnityEngine.Random.Range(0, guardSpawnPoints.Count + 1);
+                guardSpawnPoints[randIndex].SpawnGuard();
+            }
+        }
+
+        /// <summary>
+        /// Spawns x number of guards at y spawn point.
+        /// </summary>
+        /// <param name="amountOfGuards">How many guards to spawn.</param>
+        /// <param name="spawnPointIndex">Index reference to a spawn point.</param>
+        public void SpawnGuards(int amountOfGuards, int spawnPointIndex)
+        { 
+            for(int i = 0; i < amountOfGuards; i++)
+            {
+                guardSpawnPoints[spawnPointIndex].SpawnGuard();
+            }
+        }
+
+        /// <summary>
+        /// Spawns x guards across y spawners, with bool z determining if at each spawner OR across all spawners.<br/>
+        /// Input bool is whether or not you just want x guards total across ALL input spawners, or x guards at EACH input spawner.
+        /// </summary>
+        /// <param name="amountOfGuards">How many guards to spawn.</param>
+        /// <param name="spawnPointIndices">Array of index references to spawn points.</param>
+        /// <param name="totalOrPerSpawner">T = amountOfGuards is TOTAL amount spawned || F = amountOfGuards is how many PER spawner</param>
+        public void SpawnGuards(int amountOfGuards, int[] spawnPointIndices, bool totalOrPerSpawner)
+        {
+            if(totalOrPerSpawner)
+            { 
+                int randIndex = 0;
+                for(int i = 0; i < amountOfGuards; i++)
+                {
+                    randIndex = UnityEngine.Random.Range(0, spawnPointIndices.Length + 1);
+                    guardSpawnPoints[randIndex].SpawnGuard();
+                }
+            }
+            else if(!totalOrPerSpawner)
+            {
+                foreach(int spawnIndexRef in spawnPointIndices)
+                { 
+                    SpawnGuards(amountOfGuards, spawnIndexRef);    
+                }
+            }
         }
     }
 }

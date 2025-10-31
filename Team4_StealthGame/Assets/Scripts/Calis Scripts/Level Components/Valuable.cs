@@ -2,14 +2,16 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Valuable
+public class Valuable : MonoBehaviour
 {
-    [SerializeField] public enum ValuableTyping
+    public enum ValuableTyping
     { 
         Coin = 0,
         Loot = 1,
         Target = 2,
     }
+
+    [SerializeField] ValuableTyping valTypeChoice;
 
     private string valTypeName;
     public string ValTypeName
@@ -52,5 +54,10 @@ public class Valuable
                 valPoints = 10;
                 break;
         }
+    }
+
+    private void Awake()
+    {
+        valType = valTypeChoice;
     }
 }

@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 7849507913427633250}
   - component: {fileID: 1591424387664374663}
   - component: {fileID: 1564349672048370365}
+  - component: {fileID: 3472088791867067078}
   m_Layer: 0
   m_Name: Jewel
-  m_TagString: Untagged
+  m_TagString: Valuable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3175393856316718971}
   serializedVersion: 2
-  m_LocalRotation: {x: -1, y: -0, z: -0, w: -0.00000035762784}
+  m_LocalRotation: {x: -1, y: 0, z: 0, w: 0}
   m_LocalPosition: {x: 36.42, y: 0.99, z: 119.41}
   m_LocalScale: {x: 0.9196171, y: 0.8583706, z: 0.9196171}
   m_ConstrainProportionsScale: 0
@@ -1644,7 +1645,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 4906
+  m_VersionIndex: 4930
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1753,3 +1754,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &3472088791867067078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3175393856316718971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4defcf0538b695498c8a78f7ab7c729, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Valuable
+  valTypeChoice: 2

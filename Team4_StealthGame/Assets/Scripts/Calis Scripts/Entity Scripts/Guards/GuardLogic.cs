@@ -33,6 +33,17 @@ public class GuardLogic : Guard_StateMachine
         isProcessingReaction = false;
     }
 
+    private void Awake()
+    {
+        guardManager = FindAnyObjectByType<GuardManager>();
+    }
+
+    private void Start()
+    {
+        if(guardManager.isPastInit)
+            guardManager.UpdateGuardRefs(gameObject, true);
+    }
+
     private void OnDestroy()
     {
         guardManager.UpdateGuardRefs(gameObject, false);
