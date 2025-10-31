@@ -9,7 +9,7 @@ using UnityEngine.Events;
 /// The script handling the basis of guard reactions to player actions/changes in environment.
 /// There should be a separate script for handling movement/patrolling.
 /// </summary>
-public class GuardLogic : GuardBase
+public class GuardLogic : Guard_StateMachine
 {
     [SerializeField] GuardManager guardManager;
     public bool isProcessingReaction;
@@ -31,6 +31,17 @@ public class GuardLogic : GuardBase
         yield return new WaitForSeconds(nonHostileReactionTime);
         //MoveToLocation(noiseLocation);
         isProcessingReaction = false;
+    }
+
+    private void Awake()
+    {
+        guardManager = FindAnyObjectByType<GuardManager>();
+    }
+
+    private void Start()
+    {
+        if(guardManager.isPastInit)
+            guardManager.UpdateGuardRefs(gameObject, true);
     }
 
     private void OnDestroy()

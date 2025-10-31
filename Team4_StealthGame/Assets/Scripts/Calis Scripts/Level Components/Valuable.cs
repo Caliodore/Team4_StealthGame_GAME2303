@@ -4,12 +4,14 @@ using UnityEngine.UI;
 
 public class Valuable : MonoBehaviour
 {
-    [SerializeField] public enum ValuableTyping
+    public enum ValuableTyping
     { 
         Coin = 0,
         Loot = 1,
         Target = 2,
     }
+
+    [SerializeField] ValuableTyping valTypeChoice;
 
     private string valTypeName;
     public string ValTypeName
@@ -53,9 +55,8 @@ public class Valuable : MonoBehaviour
                 break;
         }
     }
-
     public Valuable()
     { 
-        valType = ValuableTyping.Coin;    
+        valType = ValuableTyping.Coin;
     }
 }

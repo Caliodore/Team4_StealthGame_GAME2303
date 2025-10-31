@@ -24,7 +24,7 @@ namespace Zhamanta
         private void Start()
         {
             playerLogic = FindFirstObjectByType<PlayerLogic>();
-            interactionCircle.enabled = false;
+            interactionCircle.enabled = false; 
             failedInteractionCircle.enabled = false;
             //jewelImage.enabled = false;
         }
