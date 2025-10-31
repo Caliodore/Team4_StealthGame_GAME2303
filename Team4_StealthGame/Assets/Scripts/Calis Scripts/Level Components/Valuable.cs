@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Valuable
+public class Valuable : MonoBehaviour
 {
     [SerializeField] public enum ValuableTyping
     { 
@@ -52,5 +52,10 @@ public class Valuable
                 valPoints = 10;
                 break;
         }
+    }
+
+    public Valuable()
+    { 
+        valType = ValuableTyping.Coin;    
     }
 }
