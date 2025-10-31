@@ -5,10 +5,11 @@ TagManager:
   serializedVersion: 3
   tags:
   - Door
-  - Valuable
   - Exit
   - Room
   - RestrictedArea
+  - Valuable
+  - GuardSpawn
   layers:
   - Default
   - TransparentFX
