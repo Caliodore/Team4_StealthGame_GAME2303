@@ -44,14 +44,14 @@ GameObject:
   - component: {fileID: 2557256737255748943}
   - component: {fileID: 3313377117769867621}
   - component: {fileID: 3871067565803761797}
-  - component: {fileID: 1125558273691082326}
-  - component: {fileID: 3700613184339683660}
-  - component: {fileID: 1895409068746325851}
-  - component: {fileID: -3367905689635112660}
-  - component: {fileID: -7041811291468401158}
-  - component: {fileID: 2759436388558794834}
-  - component: {fileID: 8125484924393249118}
-  - component: {fileID: -2407067168274583004}
+  - component: {fileID: 5889132231168160481}
+  - component: {fileID: -7444388254513591076}
+  - component: {fileID: 5429734079492790250}
+  - component: {fileID: 4274422505197852707}
+  - component: {fileID: -3469990636763332802}
+  - component: {fileID: 5369821453006837031}
+  - component: {fileID: 3625122498094877739}
+  - component: {fileID: 3976359936019808585}
   m_Layer: 0
   m_Name: NetworkPlayerTest
   m_TagString: Untagged
@@ -179,7 +179,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1125558273691082326
+--- !u!114 &5889132231168160481
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,24 +190,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96d891fd22e55e046ab63fdf2c979f80, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Controller
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Movement
   isMakingSound: 0
   isMoving: 0
-  movementSpeed: 10
+  movementSpeed: 7
   gravity: -9.81
---- !u!114 &3700613184339683660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4816408728764777165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2fdd4fb44304646a2e42bcde294cc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player_GunHandler
---- !u!114 &1895409068746325851
+--- !u!114 &-7444388254513591076
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -219,9 +207,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1032fd3a78b12844fade6e81456249fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_Look
-  lookSensitivityX: 1
+  lookSensitivityX: 7
   lookSensitivityY: 1
---- !u!114 &-3367905689635112660
+--- !u!114 &5429734079492790250
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -230,12 +218,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4816408728764777165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4034b8b9d567cf04a83319d3f207eea4, type: 3}
+  m_Script: {fileID: 11500000, guid: aa2fdd4fb44304646a2e42bcde294cc7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player_Health
-  playerHealth: {fileID: 11400000, guid: 7b8a4f9d86c31ab43ae11c53ffbd2de6, type: 2}
-  health: 0
---- !u!114 &-7041811291468401158
+  m_EditorClassIdentifier: Assembly-CSharp::Player_GunHandler
+--- !u!114 &4274422505197852707
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -249,7 +235,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_Inventory
   itemHold: {fileID: 8577700627370357781}
   initialItem: {fileID: 7111535178207495634, guid: e014d31795a64d7449b44672040f4431, type: 3}
---- !u!114 &2759436388558794834
+--- !u!114 &-3469990636763332802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816408728764777165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4034b8b9d567cf04a83319d3f207eea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Health
+  playerHealth: {fileID: 11400000, guid: 7b8a4f9d86c31ab43ae11c53ffbd2de6, type: 2}
+  health: 0
+--- !u!114 &5369821453006837031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -261,7 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: d4728b7b6a51b2a45b0def645726b1a6, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: 4330c70c3010fb942998964a296791b1, type: 3}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &8125484924393249118
+--- !u!114 &3625122498094877739
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 243517897
+  GlobalObjectIdHash: 316148271
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -304,7 +304,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &-2407067168274583004
+--- !u!114 &3976359936019808585
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -328,7 +328,7 @@ MonoBehaviour:
   RotationMaxInterpolationTime: 0.1
   ScaleLerpSmoothing: 1
   ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 1
+  AuthorityMode: 0
   TickSyncChildren: 0
   UseUnreliableDeltas: 0
   SyncPositionX: 1
