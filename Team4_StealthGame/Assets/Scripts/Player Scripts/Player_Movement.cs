@@ -34,7 +34,6 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -50,17 +49,16 @@ public class Player_Movement : MonoBehaviour
 
 
         // player sneak logic
-        if (!sprintInput || movementInput.magnitude == 0)
+        /*if (!sprintInput || movementInput.magnitude == 0)
         {
             isMakingSound = false;
         }
         else if (sprintInput && movementInput.magnitude > 0)
         {
             isMakingSound = true;
-        }
+        }*/
 
     }
-
     void Movement()
     {
 
@@ -82,16 +80,18 @@ public class Player_Movement : MonoBehaviour
 
     void OnMovement(InputValue v)
     {
+
+        print("OnMovement Called!");
         movementInput = v.Get<Vector2>();
 
-        if (movementInput.magnitude > 0)
+        /*if (movementInput.magnitude > 0)
         {
             isMoving = true;
         }
         else
         {
             isMoving = false;
-        }
+        }*/
     }
 
 
@@ -122,4 +122,4 @@ public class Player_Movement : MonoBehaviour
             Respawn();
         }
     } */
-}
+    }
