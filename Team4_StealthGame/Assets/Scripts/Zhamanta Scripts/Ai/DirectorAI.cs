@@ -25,7 +25,7 @@ public class DirectorAI : MonoBehaviour
 
     private LevelManager levelManager;
     private GuardManager guardManager;
-    private Zhamanta.UIManager uiManager;
+    private Zhamanta.GlobalUI globalUI;
 
     [SerializeField] DirectorOptions directorOptions;
     [SerializeField] PlayerStats playerStats;
@@ -33,6 +33,8 @@ public class DirectorAI : MonoBehaviour
     private Dictionary<PlayerLogic, PlayerStats> playerDictionary = new Dictionary<PlayerLogic, PlayerStats>(); //Problem A: I need a similar dictionary for guards (each guard paired with its stats).  I think it can be created in the GuardManager with a public get and private set
 
     public UnityEvent OnAlertnessStageChange;
+
+    private bool alarmOn;
 
     private void Awake()
     {
@@ -44,11 +46,12 @@ public class DirectorAI : MonoBehaviour
 
         levelManager = FindFirstObjectByType<LevelManager>(); 
         guardManager = FindFirstObjectByType<GuardManager>();
-        uiManager = FindFirstObjectByType<Zhamanta.UIManager>();
+        globalUI = FindFirstObjectByType<Zhamanta.GlobalUI>();
     }
 
     private void Start()
     {
+        alarmOn = false;
         StageDeterminant();
         StartCoroutine(CheckForSpecificBehavior());
     }
@@ -76,10 +79,6 @@ public class DirectorAI : MonoBehaviour
             alertness = Alertness.Lockdown;
             OnAlertnessStageChange.Invoke();
             StartCoroutine(LockdownTimer());
-            if (firstLockdownDone == false)
-            {
-                StartCoroutine(PermanentCheckOnPlayerLastKnown()); //Problem G
-            }
             firstLockdownDone = true;
         }
         else if (alertnessL < 0 || alertnessL >= 100)
@@ -90,7 +89,7 @@ public class DirectorAI : MonoBehaviour
 
     IEnumerator LockdownTimer()
     {
-        levelManager.LockdownHandler(); //Lockdown activate. Does this handler make all doors lock? (Cali: Yes, it should. As doors are added to their dictionary in LevelManager, the toggleLockdown event also adds them as a listener.)
+        levelManager.LockdownHandler(); 
 
         float playersHealthTotal = 0;
 
@@ -118,32 +117,38 @@ public class DirectorAI : MonoBehaviour
         }
     }
 
-    IEnumerator PermanentCheckOnPlayerLastKnown()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(15f);
-            //guardManager.GetNearestGuards(1, levelManager.playerLastKnownLocation); //Problem G: I don't understand the point of playerLastKnownLocation if I cannot get it because it is private
-        }
-    }
-
     private void Update()
     {
         RelaxAlertness();
-        LightsBehavior();
+        ActivateAlarmUI();
     }
 
-    public void LightsBehavior() 
+    public void ActivateAlarmUI() 
     {
-        // Problem C: I do not know why Cali has a getter for an AlarmActive bool in the GuardManager if I already have a stage for it. Please let me know if I am misinterpreting something!
-        // Cali: I was developing it on it's own, because I knew that the alarm would mostly be used by the GuardManager out of all the stuff I was working on. If you would prefer to centralize it here that is ok.
         if (alertness == Alertness.Alarm)
         {
-            uiManager.FlashingRed();
+            globalUI.FlashingRed();
         }
-        else if (alertness == Alertness.Lockdown)
+    }
+
+    public void ActivateAlarm() //Called when invoking OnAlertnessStageChange
+    {
+        if (alertness == Alertness.Alarm)
         {
-            uiManager.TurnOffLights();
+            alarmOn = true;
+            globalUI.AlarmSwitch(alarmOn);
+        }
+        else
+        {
+            alarmOn = false;
+        }
+    }
+
+    public void TurnLightsOff() //Called when invoking OnAlertnessStageChange
+    {
+        if (alertness == Alertness.Lockdown)
+        {
+            globalUI.TurnLightsOff();
         }
     }
 
@@ -254,43 +259,28 @@ public class DirectorAI : MonoBehaviour
                 actualNumGuardsToAdd = GuardsToAdd();
                 if ((numCurrentGuards + actualNumGuardsToAdd) <= directorOptions.stage1MaxGuards)
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B: I think Cali wants me to use the UpdateGuardRefs to add guards actually, but I am not sure how.
-                    //Cali: The intention of the UpdateGuardRefs is for making sure the dictionary is up to date if guards are added/removed.
-                    //UpdateGuardRefs does not handle adding guards itself.
-
-                    //Maybe if I had the dictionary I am asking for in Problem A, then I could do...
-                    //List<GuardLogic> guardKeys = guardDictionary.Keys.ToList();
-                    /*for (int i = 0; i < actualNumGuardsToAdd; i++)
-                    {
-                        guardManager.UpdateGuardRefs(guardKeys[i], true);
-                    }*/
-
-                    // Please let me know if the above for loop would be correct, close, or completely wrong
+                    guardManager.SpawnGuards(actualNumGuardsToAdd);
                 }
                 break;
             case Alertness.Stage2:
                 actualNumGuardsToAdd = GuardsToAdd() * 2;
                 if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.stage2MaxGuards))
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B
+                    guardManager.SpawnGuards(actualNumGuardsToAdd);
                 }
                 break;
             case Alertness.Alarm:
                 actualNumGuardsToAdd = GuardsToAdd() * 3;
                 if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.alarmMaxGuards))
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B
+                    guardManager.SpawnGuards(actualNumGuardsToAdd);
                 }
                 break;
             case Alertness.Lockdown:
                 actualNumGuardsToAdd = GuardsToAdd() * 4;
                 if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.lockdownMaxGuards))
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B
+                    guardManager.SpawnGuards(actualNumGuardsToAdd);
                 }
                 break;
         }
@@ -324,6 +314,4 @@ public class DirectorAI : MonoBehaviour
     {
         playerDictionary.Remove(playerLogic);
     }
-
-    //Problem F: I lack the creativity to think of a clever/fun way to use the SealUnsealRoom(GameObject roomRef, bool sealOrUnseal) and DoorStateUpdate(GameObject doorRef, DoorType changeToState) functions, help!
 }
