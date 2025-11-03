@@ -14,14 +14,6 @@ namespace Cali
 {
     public class PlayerLogic : PlayerBase
     {
-        /*
-         * ToDo Post-10/26
-         * Zhamanta's Requests:
-         * - Clarification on player deaths/downs and updating the UI respectively. 
-         * 
-         */
-
-
         PlayerLogic playerInst;
 
         [Header("Component Refs")]

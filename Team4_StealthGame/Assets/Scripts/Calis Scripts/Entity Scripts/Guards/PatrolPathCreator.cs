@@ -29,7 +29,7 @@ public class PatrolPathCreator : MonoBehaviour
     /// Creates an array of patrol points between the first entry in the input array through each of the rooms in order.
     /// </summary>
     /// <param name="roomsToPathBetween"></param>
-    public void CreatePatrolBetween(GameObject[] roomsToPathBetween)
+    public List<Transform> CreatePatrolBetween(GameObject[] roomsToPathBetween)
     {
         int roomIndex = 0;
 
@@ -69,6 +69,15 @@ public class PatrolPathCreator : MonoBehaviour
                 print("No patrol points found between rooms.");
 
             roomIndex++;
+        }
+        if(roomIndex >= roomsToPathBetween.Length)
+        { 
+            return tempPatrolPoints;    
+        }
+        else
+        { 
+            print("Didn't properly iterate through all inputted rooms. Debug PatrolPathCreator script.");
+            return tempPatrolPoints;
         }
     }
 }
