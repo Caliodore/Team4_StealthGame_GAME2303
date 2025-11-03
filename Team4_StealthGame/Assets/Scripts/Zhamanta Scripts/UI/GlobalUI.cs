@@ -12,6 +12,7 @@ namespace Zhamanta
         [SerializeField] TMP_Text alertnessText;
         [SerializeField] Image targetImage;
         [SerializeField] GameObject lightsOffPanel;
+        [SerializeField] GameObject gameOverPanel;
 
         // Alarm UI
         private bool alarmOn;
@@ -30,14 +31,35 @@ namespace Zhamanta
         {
             targetImage.enabled = false;
             lightsOffPanel.SetActive(false);
+            gameOverPanel.SetActive(false);
             fadeImage.enabled = false;
             alarmOn = false;
         }
 
 
 
+        [ContextMenu("EnableGameOverPanel")]
+        public void EnableGameOverPanel() // CALL THIS through event
+        {
+            GameOverPanelCallFunctionForClientsRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        public void GameOverPanelCallFunctionForClientsRpc()
+        {
+            EnableGameOverPanelRpc();
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        public void EnableGameOverPanelRpc()
+        {
+            gameOverPanel.SetActive(true);
+        }
+
+
+
         [ContextMenu("EnableTargetImage")]
-        public void UpdateAlertnessText() // CALL THIS through event (along with UpdateAlertnessLevel(float alertnessAmount))
+        public void UpdateAlertnessText() // CALL THIS (along with UpdateAlertnessLevel(float alertnessAmount))
         {
             UpdateAlertnessCallFunctionForClientsRpc();
         }
@@ -57,7 +79,7 @@ namespace Zhamanta
  
 
         [ContextMenu("EnableTargetImage")]
-        public void EnableTargetImage() // CALL THIS through event.  If one player collects the target valuable, everyone should see it so that they all know they can win now!
+        public void EnableTargetImage() // CALL THIS.  If one player collects the target valuable, everyone should see it so that they all know they can win now!
         {
             EnableTargetImageCallFunctionForClientsRpc();
         }
@@ -77,7 +99,7 @@ namespace Zhamanta
 
 
         [ContextMenu("DisableTargetImage")]
-        public void DisableTargetImage() // CALL THIS through event.  If the player holding the target dies/gets arrested before escaping, they should drop the target valuable, so the image will disappear.
+        public void DisableTargetImage() // CALL THIS.  If the player holding the target dies/gets arrested before escaping, they should drop the target valuable, so the image will disappear.
         {
             DisableTargetImageCallFunctionForClientsRpc();
         }

@@ -29,7 +29,6 @@ namespace Zhamanta
         private Zhamanta.GlobalUI globalUI;
 
         [SerializeField] DirectorOptions directorOptions;
-        [SerializeField] PlayerStats playerStats;
 
         private List<Player_Health> playerHealths = new List<Player_Health>();
 
@@ -239,7 +238,7 @@ namespace Zhamanta
         }
 
 
-        public void GuardAmountRegulator() //CALL THIS when alertnessL gets updated (when UpdateAlertnessLevel() is called).  Another option is to simply call it when invoking OnAlertnessStageChange  <<<Let me know which one/your thoughts
+        public void GuardAmountRegulator() 
         {
             int numCurrentGuards = guardManager.CurrentlyActiveGuards;
             int initialAddValue = GuardsToAdd();
