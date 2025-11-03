@@ -217,7 +217,7 @@ public class NetworkController : NetworkBehaviour
         if (isShooting)
         {     
             
-          currentGun?.AttemptFire();
+          currentGun?.AttemptFireRpc();
             
         }
         

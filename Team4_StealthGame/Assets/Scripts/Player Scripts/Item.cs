@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 
@@ -9,7 +10,7 @@ using UnityEngine;
 ///  List of Items: Guns, Healables, Tools, and more (if added). <br/> <br/>
 ///  NOTE: If there is any problems please message Carlos
 /// </summary>
-public class Item : MonoBehaviour
+public class Item : NetworkBehaviour
 {
     protected Player_Inventory player;
     public virtual void Equip(Player_Inventory p)

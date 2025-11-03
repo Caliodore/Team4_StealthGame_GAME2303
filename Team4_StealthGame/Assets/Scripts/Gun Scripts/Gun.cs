@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 // gun base class
@@ -18,6 +19,7 @@ public class Gun : Item
     // private variables
     protected int ammo;
     protected float elapsed = 0;
+    protected bool canShoot;
 
     // Start is called before the first frame update
     void Start()
@@ -49,25 +51,20 @@ public class Gun : Item
 
         return true;
     }
-
-    public virtual bool AttemptFire()
+    [Rpc(SendTo.Server)]
+    public virtual void AttemptFireRpc()
     {
         if (ammo <= 0)
         {
-            return false;
+            canShoot = false;
         }
 
         if(elapsed < timeBetweenShots)
         {
-            return false;
+            canShoot = false;
         }
 
-        return true;
-    }
-
-    public virtual bool AttemptAltFire()
-    {
-        return false;
+        canShoot = true;
     }
 
     public virtual void AddAmmo(int amount)

@@ -34,7 +34,6 @@ public class Player_Movement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
@@ -60,7 +59,6 @@ public class Player_Movement : MonoBehaviour
         }
 
     }
-
     void Movement()
     {
 
@@ -82,6 +80,8 @@ public class Player_Movement : MonoBehaviour
 
     void OnMovement(InputValue v)
     {
+
+        print("OnMovement Called!");
         movementInput = v.Get<Vector2>();
 
         if (movementInput.magnitude > 0)
@@ -122,4 +122,4 @@ public class Player_Movement : MonoBehaviour
             Respawn();
         }
     } */
-}
+    }
