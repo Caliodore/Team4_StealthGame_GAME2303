@@ -36,12 +36,15 @@ public class Player_Inventory : NetworkBehaviour
         // this is only for testing purposes :D - Carlos
         if (initialItem != null)
         {
-            Item newItem = Instantiate(initialItem, itemHold);
-            AddItem(newItem);
+            Item newItem = Instantiate(initialItem, itemHold.position, Quaternion.identity);
+            
             newItem.GetComponent<NetworkObject>().Spawn();
+
+            AddItem(newItem);
+
             //newItem.gameObject.transform.position = itemHold.position;
-            newItem.transform.parent = itemHold;
-            newItem.transform.localPosition = itemHold.position;
+            //newItem.transform.parent = itemHold;
+            //newItem.transform.localPosition = itemHold.position;
         }
 
     }
@@ -51,6 +54,8 @@ public class Player_Inventory : NetworkBehaviour
 
     void OnScrollWheel(InputValue v)
     {
+        if (inventory.Count <= 1)
+            return;
 
         Debug.Log("Scroll Wheel function called!");
 
@@ -88,8 +93,9 @@ public class Player_Inventory : NetworkBehaviour
 
         // enable the new item
         i.gameObject.SetActive(true);
-        i.transform.parent = itemHold;
-        i.transform.localPosition = Vector3.zero;
+        i.transform.parent = transform;
+        print("parented");
+        i.transform.position = itemHold.position;
         currentItem = i;
 
         i.Equip(this);
@@ -99,7 +105,11 @@ public class Player_Inventory : NetworkBehaviour
 
     }
 
-  
+    private void Update()
+    {
+        Debug.Log(currentItem.name);
+        currentItem.transform.position = itemHold.position;
+    }
 
     // Add item to the list
     public void AddItem(Item i)

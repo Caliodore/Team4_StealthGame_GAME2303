@@ -12,6 +12,9 @@ using UnityEngine.InputSystem;
 
 public class Player_Look : MonoBehaviour
 {
+    // Center point Refrence
+    [SerializeField] Transform centerPoint;
+
     // look stats
     [SerializeField] float lookSensitivityX = 1.0f;
     [SerializeField] float lookSensitivityY = 1.0f; // Vertical sensitivity if needed (
@@ -35,8 +38,8 @@ public class Player_Look : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Look();
-        //Turning();
+       // Look();
+        Turning();
     }
 
     void Look()
@@ -48,12 +51,21 @@ public class Player_Look : MonoBehaviour
         transform.Rotate(Vector3.up * lookX);
     }
 
-    void Turning() // I don't even know
+    void Turning()
     {
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Vector3 relPos = new Vector3(mousePos.x, 0, 0);    
-        Vector2 distance = relPos - transform.position;
-        transform.Rotate(distance * lookSensitivityX);
+        Vector3 mousePos = Mouse.current.position.ReadValue(); // new input system
+
+        Ray camRay = Camera.main.ScreenPointToRay(mousePos);
+        RaycastHit floorHit;
+
+        if (Physics.Raycast(camRay, out floorHit, camRayLength, floorMask))
+        {
+            Vector3 playerToMouse = floorHit.point - transform.position;
+            playerToMouse.y = 0f;
+
+            Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
+            playerRigidbody.MoveRotation(newRotation);
+        }
     }
 
 

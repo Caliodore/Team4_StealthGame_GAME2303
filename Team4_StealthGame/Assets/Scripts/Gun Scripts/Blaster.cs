@@ -24,7 +24,7 @@ public class Blaster : Gun
         b.GetComponent<NetworkObject>().Spawn();
         // test
 
-        anim.SetTrigger("shoot");
+        //anim.SetTrigger("shoot");
         elapsed = 0;
         ammo -= 1;
 
