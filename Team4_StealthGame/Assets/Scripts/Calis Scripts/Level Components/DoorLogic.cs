@@ -80,7 +80,7 @@ namespace Cali
             lockChildScript = GetComponentInChildren<DoorMovement>();
             doorPosition = gameObject.transform.position;
             lockdownToggle += LockdownToggle;
-            playerTag = FindAnyObjectByType<PlayerLogic>().tag;
+            playerTag = new string("Player");
         }
 
         /// <summary>
