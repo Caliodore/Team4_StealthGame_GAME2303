@@ -11,9 +11,12 @@ namespace Zhamanta
     {
         [SerializeField] Player_Health playerHealth;
         [SerializeField] PlayerLogic playerLogic;
+
+        //Basic UI visuals
         [SerializeField] TMP_Text lootScoreText;
         [SerializeField] Image healthBarImage;
 
+        //Interaction Visuals
         [SerializeField] Image interactionCircle;
         [SerializeField] Image failedInteractionCircle;
 
@@ -21,15 +24,26 @@ namespace Zhamanta
 
         //Lock Visuals
         [SerializeField] Image lockedImage;
-        [SerializeField] Image unlockedGif;
+        [SerializeField] Image unlockedImage;
+
+        //Other visuals
+        [SerializeField] Image lockpickingImage;
+        [SerializeField] Image KOimage;
+        [SerializeField] Image skullImage;
 
         private void Start()
         {
             playerHealth = GetComponentInParent<Player_Health>();
             playerLogic = GetComponentInParent<PlayerLogic>();
+
             interactionCircle.enabled = false; 
             failedInteractionCircle.enabled = false;
+
             lockedImage.enabled = false;
+            skullImage.enabled = false;
+            unlockedImage.enabled = false;
+            lockpickingImage.enabled = false;
+            KOimage.enabled = false;
         }
 
         public void UpdateHealthBar() //CALL THIS when player gets hurt
@@ -37,13 +51,45 @@ namespace Zhamanta
             healthBarImage.fillAmount = playerHealth.health / 100;
         }
 
-        public void UpdateLootScoreText() //CALL THIS when collecting loot.  Feel free to edit this script and finish this function.
+
+
+        public void UpdateLootScoreText() //CALL THIS when collecting loot.  I can't find where you are keeping track of the loot score.  If the player is not the one calling this, create a function for it in MediumUI.
         {
             // lootScoreText.text = ?
         }
 
+
+
+        public void ShowSkullImage() //Go to MediumUI
+        {
+            StartCoroutine(SkullImageTimer());
+        }
+
+        IEnumerator SkullImageTimer()
+        {
+            skullImage.enabled = true;
+            yield return new WaitForSeconds(1);
+            skullImage.enabled = false;
+        }
+
+
+
+        public void ShowKOImage() //Go to MediumUI
+        {
+            StartCoroutine(KOImageTimer());
+        }
+
+        IEnumerator KOImageTimer()
+        {
+            KOimage.enabled = true;
+            yield return new WaitForSeconds(1);
+            KOimage.enabled = false;
+        }
+
+
+
         // Lock visuals
-        public void ShowLockedImage() //CALL THIS when trying to open locked door
+        public void ShowLockedImage() //Go to MediumUI
         {
             StartCoroutine(LockedImageTimer());
         }
@@ -55,17 +101,18 @@ namespace Zhamanta
             lockedImage.enabled = false;
         }
 
-        public void ShowUnlockedGif() //CALL THIS when a door has been successfully unlocked
+        public void ShowUnlockedGif() //Go to MediumUI 
         {
             StartCoroutine(UnlockedGifTimer());
         }
 
         IEnumerator UnlockedGifTimer()
         {
-            unlockedGif.enabled = true;
+            unlockedImage.enabled = true;
             yield return new WaitForSeconds(2);
-            unlockedGif.enabled = false;
+            unlockedImage.enabled = false;
         }
+
 
 
         // Interaction Circles
@@ -74,13 +121,14 @@ namespace Zhamanta
             StartCoroutine(InteractionCircle());
         }
 
-        public void EnableFailedInteractionCircle() //CALL THIS on failedInteraction event found in the DoorLogic script
+        public void EnableFailedInteractionCircle()  //Go to MediumUI
         {
             StartCoroutine(FailedInteractionCircle());
         }
 
         IEnumerator InteractionCircle()
         {
+            //lockpickingGif.enabled = true;  This assumes interacting with a door means to lockpick it.  If interaction is not exclusive to lockpicking, then this needs to be revised.
             interactionCircle.enabled = true;
             elapsedInteractionTime = 0;
             while (elapsedInteractionTime < playerLogic.interactTime)
@@ -94,6 +142,7 @@ namespace Zhamanta
                 if (interactionCircle.enabled)
                 {
                     interactionCircle.enabled = false;
+                    //lockpickingGif.enabled = false;
                 }
             }
            

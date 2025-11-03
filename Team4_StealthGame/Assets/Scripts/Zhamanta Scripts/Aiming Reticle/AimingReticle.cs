@@ -1,19 +1,23 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class AimingReticle : MonoBehaviour
+namespace Zhamanta
 {
-    [SerializeField] Camera mainCam;
-    private Vector3 mousePos;
-
-    private void Update()
+    public class AimingReticle : MonoBehaviour
     {
-        mousePos = mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        [SerializeField] Camera mainCam;
+        private Vector3 mousePos;
 
-        Vector3 rotation = mousePos - transform.position;
+        private void Update()
+        {
+            mousePos = mainCam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 
-        float roty = Mathf.Atan2(rotation.z, rotation.x) * Mathf.Rad2Deg;
+            Vector3 rotation = mousePos - transform.position;
 
-        transform.rotation = Quaternion.Euler(0, -roty, 0);
+            float roty = Mathf.Atan2(rotation.z, rotation.x) * Mathf.Rad2Deg;
+
+            transform.rotation = Quaternion.Euler(0, -roty, 0);
+        }
     }
 }
+

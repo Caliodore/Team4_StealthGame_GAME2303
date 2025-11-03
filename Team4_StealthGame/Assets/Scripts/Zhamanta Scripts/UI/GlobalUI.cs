@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
-using Cali;
 using Unity.Netcode;
 
 
@@ -25,7 +24,6 @@ namespace Zhamanta
         [SerializeField]
         float fadeSpeed;
         Color currentTarget;
-
 
 
         private void Start()
