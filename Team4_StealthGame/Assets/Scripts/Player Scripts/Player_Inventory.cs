@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -13,7 +14,7 @@ using UnityEngine.Rendering;
 /*****************************************************************/
 
 
-public class Player_Inventory : MonoBehaviour
+public class Player_Inventory : NetworkBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -37,12 +38,17 @@ public class Player_Inventory : MonoBehaviour
         {
             Item newItem = Instantiate(initialItem, itemHold);
             AddItem(newItem);
+            newItem.GetComponent<NetworkObject>().Spawn();
+            //newItem.gameObject.transform.position = itemHold.position;
+            newItem.transform.parent = itemHold;
+            newItem.transform.localPosition = itemHold.position;
         }
 
     }
 
     // OnScrollWheel is how the player iterates through its iventory
     // up or down does not matter
+
     void OnScrollWheel(InputValue v)
     {
 

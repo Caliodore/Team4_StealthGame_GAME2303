@@ -49,14 +49,14 @@ public class Player_Movement : MonoBehaviour
 
 
         // player sneak logic
-        /*if (!sprintInput || movementInput.magnitude == 0)
+        if (!sprintInput || movementInput.magnitude == 0)
         {
             isMakingSound = false;
         }
         else if (sprintInput && movementInput.magnitude > 0)
         {
             isMakingSound = true;
-        }*/
+        }
 
     }
     void Movement()
@@ -84,14 +84,14 @@ public class Player_Movement : MonoBehaviour
         print("OnMovement Called!");
         movementInput = v.Get<Vector2>();
 
-        /*if (movementInput.magnitude > 0)
+        if (movementInput.magnitude > 0)
         {
             isMoving = true;
         }
         else
         {
             isMoving = false;
-        }*/
+        }
     }
 
 

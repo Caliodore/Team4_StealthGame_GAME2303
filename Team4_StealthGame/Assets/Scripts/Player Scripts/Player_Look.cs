@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,11 +19,24 @@ public class Player_Look : MonoBehaviour
     // private look variables
     Vector2 lookInput;
     float xRotation;
+    private int floorMask;
+    private float camRayLength = 100f;
+    private Rigidbody playerRigidbody;
+    Camera cam;
+
+
+    private void Start()
+    {
+        cam = GetComponent<Camera>();
+        floorMask = LayerMask.GetMask("Floor");
+        playerRigidbody = GetComponent<Rigidbody>();
+    }
 
     // Update is called once per frame
     void Update()
     {
         Look();
+        //Turning();
     }
 
     void Look()
@@ -33,6 +47,16 @@ public class Player_Look : MonoBehaviour
 
         transform.Rotate(Vector3.up * lookX);
     }
+
+    void Turning() // I don't even know
+    {
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+        Vector3 relPos = new Vector3(mousePos.x, 0, 0);    
+        Vector2 distance = relPos - transform.position;
+        transform.Rotate(distance * lookSensitivityX);
+    }
+
+
 
     public void OnLook(InputValue v)
     {
