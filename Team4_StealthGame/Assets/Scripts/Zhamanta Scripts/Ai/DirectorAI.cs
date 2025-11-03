@@ -30,7 +30,8 @@ public class DirectorAI : MonoBehaviour
     [SerializeField] DirectorOptions directorOptions;
     [SerializeField] PlayerStats playerStats;
 
-    private Dictionary<PlayerLogic, PlayerStats> playerDictionary = new Dictionary<PlayerLogic, PlayerStats>(); //Problem A: I need a similar dictionary for guards (each guard paired with its stats).  I think it can be created in the GuardManager with a public get and private set
+    private List<Player_Health> playerHealths = new List<Player_Health>();
+    //private List<Guard_Health> guardHealths = new List<Guard_Health>();  Problem A: do guards not have health like the players?
 
     public UnityEvent OnAlertnessStageChange;
 
@@ -38,11 +39,12 @@ public class DirectorAI : MonoBehaviour
 
     private void Awake()
     {
-        PlayerLogic[] players = FindObjectsByType<PlayerLogic>(FindObjectsSortMode.None);
-        foreach (PlayerLogic player in players)
-        {
-            //playerDictionary.Add(player, player.playerStats); Problem E: PlayerLogic needs a serializable field that fetches its correcponding PlayerStats SO
-        }
+        Player_Health[] players = FindObjectsByType<Player_Health>(FindObjectsSortMode.None);
+        playerHealths = new List<Player_Health>(players);
+
+        // Problem A
+        /*Guard_Health[] guards = FindObjectsByType<Guard_Health>(FindObjectsSortMode.None);
+        guardHealths = new List<Guard_Health>(players);*/
 
         levelManager = FindFirstObjectByType<LevelManager>(); 
         guardManager = FindFirstObjectByType<GuardManager>();
@@ -93,15 +95,12 @@ public class DirectorAI : MonoBehaviour
 
         float playersHealthTotal = 0;
 
-        foreach (KeyValuePair<PlayerLogic, PlayerStats> pair in playerDictionary)
+        foreach (Player_Health ph in playerHealths)
         {
-            PlayerLogic player = pair.Key;
-            PlayerStats playerStats = pair.Value;
-
-            playersHealthTotal += playerStats.health;
+            playersHealthTotal += ph.health;
         }
 
-        float playersHealthAverage = playersHealthTotal / playerDictionary.Count;
+        float playersHealthAverage = playersHealthTotal / playerHealths.Count;
 
         if (playersHealthAverage <= 50)
         {
@@ -224,12 +223,10 @@ public class DirectorAI : MonoBehaviour
 
         if (alertness == Alertness.Stage2)
         {
-            foreach (KeyValuePair<PlayerLogic, PlayerStats> pair in playerDictionary)
+            foreach (Player_Health ph in playerHealths)
             {
-                PlayerLogic player = pair.Key;
-                PlayerStats playerStats = pair.Value;
 
-                if (alertness == Alertness.Stage2 && playerStats.health == 100)
+                if (alertness == Alertness.Stage2 && ph.health == 100)
                 {
                     //Also send a few full health guards to player, but I need to access guard health somehow (Problem A)
                 }
@@ -288,7 +285,7 @@ public class DirectorAI : MonoBehaviour
 
     private int GuardsToAdd()
     {
-        int numPlayersAlive = playerDictionary.Count;
+        int numPlayersAlive = playerHealths.Count;
         int numGuardsToAdd = 0;
 
         switch (numPlayersAlive)
@@ -310,8 +307,8 @@ public class DirectorAI : MonoBehaviour
         return numGuardsToAdd;
     }
 
-    public void RemovePlayer(PlayerLogic playerLogic) //Call through event (OnPlayerDeath or something similar)
+    public void RemovePlayerFromList(Player_Health playerHealth) //Call through event (OnPlayerDeath or something similar)
     {
-        playerDictionary.Remove(playerLogic);
+        playerHealths.Remove(playerHealth);
     }
 }

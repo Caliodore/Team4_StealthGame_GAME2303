@@ -19,29 +19,62 @@ namespace Zhamanta
 
         private float elapsedInteractionTime;
 
+        //Lock Visuals
+        [SerializeField] Image lockedImage;
+        [SerializeField] Image unlockedGif;
+
         private void Start()
         {
             playerHealth = GetComponentInParent<Player_Health>();
+            playerLogic = GetComponentInParent<PlayerLogic>();
             interactionCircle.enabled = false; 
             failedInteractionCircle.enabled = false;
+            lockedImage.enabled = false;
         }
 
-        public void UpdateHealthBar()
+        public void UpdateHealthBar() //CALL THIS when player gets hurt
         {
             healthBarImage.fillAmount = playerHealth.health / 100;
         }
 
-        public void UpdateLootScoreText()
+        public void UpdateLootScoreText() //CALL THIS when collecting loot.  Feel free to edit this script and finish this function.
         {
             // lootScoreText.text = ?
         }
 
-        public void EnableInteractionCircle()
+        // Lock visuals
+        public void ShowLockedImage() //CALL THIS when trying to open locked door
+        {
+            StartCoroutine(LockedImageTimer());
+        }
+
+        IEnumerator LockedImageTimer()
+        {
+            lockedImage.enabled = true;
+            yield return new WaitForSeconds(1);
+            lockedImage.enabled = false;
+        }
+
+        public void ShowUnlockedGif() //CALL THIS when a door has been successfully unlocked
+        {
+            StartCoroutine(UnlockedGifTimer());
+        }
+
+        IEnumerator UnlockedGifTimer()
+        {
+            unlockedGif.enabled = true;
+            yield return new WaitForSeconds(2);
+            unlockedGif.enabled = false;
+        }
+
+
+        // Interaction Circles
+        public void EnableInteractionCircle() //CALL THIS when the player is interacting
         {
             StartCoroutine(InteractionCircle());
         }
 
-        public void EnableFailedInteractionCircle() //Called on failedInteraction event (At Door Logic)
+        public void EnableFailedInteractionCircle() //CALL THIS on failedInteraction event found in the DoorLogic script
         {
             StartCoroutine(FailedInteractionCircle());
         }

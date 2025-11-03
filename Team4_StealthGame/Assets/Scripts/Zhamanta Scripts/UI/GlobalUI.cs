@@ -3,14 +3,16 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using Cali;
+using Unity.Netcode;
 
 
 namespace Zhamanta
 {
-    public class GlobalUI : MonoBehaviour
+    public class GlobalUI : NetworkBehaviour
     {
         [SerializeField] TMP_Text alertnessText;
         [SerializeField] Image targetImage;
+        [SerializeField] GameObject lightsOffPanel;
 
         // Alarm UI
         private bool alarmOn;
@@ -24,9 +26,7 @@ namespace Zhamanta
         float fadeSpeed;
         Color currentTarget;
 
-        // Lights off UI
-        [SerializeField]
-        private GameObject lightsOffPanel;
+
 
         private void Start()
         {
@@ -36,29 +36,82 @@ namespace Zhamanta
             alarmOn = false;
         }
 
-        // Could use UnityActions/Events instead of Update() for optimization. Cali: highly agree
-        private void Update()
+
+
+        [ContextMenu("EnableTargetImage")]
+        public void UpdateAlertnessText() // CALL THIS through event (along with UpdateAlertnessLevel(float alertnessAmount))
         {
-            UpdateAlertnessText();
+            UpdateAlertnessCallFunctionForClientsRpc();
         }
 
+        [Rpc(SendTo.Server)]
+        public void UpdateAlertnessCallFunctionForClientsRpc()
+        {
+            UpdateAlertnessTextRpc();
+        }
 
-        public void UpdateAlertnessText()
+        [Rpc(SendTo.ClientsAndHost)]
+        public void UpdateAlertnessTextRpc()
         {
             alertnessText.text = "Alertness: " + AlertnessLevel.alertnessL.ToString();
         }
 
-        public void EnableTargetImage() // If one player collects the target valuable, everyone should see it so that they all know they can win now!
+ 
+
+        [ContextMenu("EnableTargetImage")]
+        public void EnableTargetImage() // CALL THIS through event.  If one player collects the target valuable, everyone should see it so that they all know they can win now!
+        {
+            EnableTargetImageCallFunctionForClientsRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        public void EnableTargetImageCallFunctionForClientsRpc()
+        {
+            EnableTargetImageRpc();
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        public void EnableTargetImageRpc()
         {
             targetImage.enabled = true;
         }
 
-        public void DisableTargetImage() // If the player holding the target dies/gets arrested before escaping, they should drop the target valuable.
+
+
+        [ContextMenu("DisableTargetImage")]
+        public void DisableTargetImage() // CALL THIS through event.  If the player holding the target dies/gets arrested before escaping, they should drop the target valuable, so the image will disappear.
+        {
+            DisableTargetImageCallFunctionForClientsRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        public void DisableTargetImageCallFunctionForClientsRpc()
+        {
+            DisableTargetImageRpc();
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        public void DisableTargetImageRpc() 
         {
             targetImage.enabled = false;
         }
 
+
+
+        [ContextMenu("AlarmSwitch")]
         public void AlarmSwitch(bool alarmOn)
+        {
+            AlarmCallFunctionForClientsRpc(alarmOn);
+        }
+
+        [Rpc(SendTo.Server)]
+        public void AlarmCallFunctionForClientsRpc(bool alarmOn)
+        {
+            AlarmSwitchRpc(alarmOn);
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        public void AlarmSwitchRpc(bool alarmOn)
         {
             if (alarmOn)
             {
@@ -97,7 +150,22 @@ namespace Zhamanta
             }
         }
 
-        public void TurnLightsOff() 
+
+
+        [ContextMenu("TurnLightsOff")]
+        public void TurnLightsOff()
+        {
+            LightsCallFunctionForClientsRpc();
+        }
+
+        [Rpc(SendTo.Server)]
+        public void LightsCallFunctionForClientsRpc()
+        {
+            TurnLightsOffRpc();
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        public void TurnLightsOffRpc() 
         {
             StartCoroutine(LightsOffDuration());
         }
