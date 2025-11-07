@@ -107,7 +107,7 @@ public class Player_Inventory : NetworkBehaviour
 
     private void Update()
     {
-        Debug.Log(currentItem.name);
+        //Debug.Log(currentItem.name);
         currentItem.transform.position = itemHold.position;
     }
 

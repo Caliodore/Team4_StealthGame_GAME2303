@@ -18,7 +18,7 @@ public class Guard_DetectionSensor : MonoBehaviour
     private void OnTriggerEnter(Collider other)
 
     {
-        if (other.GetComponent<Player_Movement>())
+        if (other.CompareTag("Player"))
         {
             playerInSensor = true;
         }
@@ -27,7 +27,7 @@ public class Guard_DetectionSensor : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<Player_Movement>())
+        if (other.CompareTag("Player"))
         {
             playerInSensor = false;
             onSight.Invoke(playerInSensor);
@@ -36,7 +36,10 @@ public class Guard_DetectionSensor : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        onHeard.Invoke(player.isMakingSound, player.isMoving, playerInSensor);
-        onSight.Invoke(playerInSensor);
+        if(other.CompareTag("Player"))
+        {
+            onHeard.Invoke(player.isMakingSound, player.isMoving, playerInSensor);
+            onSight.Invoke(playerInSensor);
+        }
     }
 }
