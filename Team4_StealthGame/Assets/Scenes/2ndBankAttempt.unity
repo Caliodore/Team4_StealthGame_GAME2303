@@ -19486,6 +19486,70 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7876892200614497132, guid: d8dad9cdc1aee4a48b0e8e140c4829bb, type: 3}
   m_PrefabInstance: {fileID: 1458448562}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &360762695
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 360762697}
+  - component: {fileID: 360762696}
+  m_Layer: 0
+  m_Name: GuardManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &360762696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360762695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88040773acd8d2741aca8820693f729d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cali.GuardManager
+  guardStatRef: {fileID: 11400000, guid: fa6e80c873f2b724ea6e84f8ae745dd1, type: 2}
+  attachedTransform: {fileID: 0}
+  patrolPoints: []
+  agent: {fileID: 0}
+  target: {fileID: 0}
+  environmentLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  guardManager: {fileID: 0}
+  isProcessingReaction: 0
+  guardHearsFailedInteraction:
+    m_PersistentCalls:
+      m_Calls: []
+  nonHostileReactionTime: 2
+  allPatrolPoints: []
+  guardSpawnPoints: []
+  levelManager: {fileID: 0}
+  netManager: {fileID: 0}
+  alarmActive: 0
+  isPastInit: 0
+--- !u!4 &360762697
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360762695}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.88617, y: 0.05, z: -11.97435}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &364401599
 Mesh:
   m_ObjectHideFlags: 0
@@ -58938,7 +59002,7 @@ Transform:
   m_GameObject: {fileID: 1083752557}
   serializedVersion: 2
   m_LocalRotation: {x: 0.6992079, y: -0.0000001399077, z: 0.00000013869908, w: 0.7149185}
-  m_LocalPosition: {x: -35.81898, y: 96.24, z: -3.47928}
+  m_LocalPosition: {x: -35, y: 92, z: -14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -63885,7 +63949,7 @@ Transform:
   m_GameObject: {fileID: 1180464480}
   serializedVersion: 2
   m_LocalRotation: {x: 0.6992079, y: -0.00000009792566, z: 0.000000095773714, w: 0.7149184}
-  m_LocalPosition: {x: -35.81898, y: 96.24, z: -3.47928}
+  m_LocalPosition: {x: -35, y: 92, z: -14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -113212,3 +113276,4 @@ SceneRoots:
   - {fileID: 760683861}
   - {fileID: 121068541}
   - {fileID: 1569869375}
+  - {fileID: 360762697}
