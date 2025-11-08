@@ -1,23 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class Blaster : Gun
 {
-    public override bool AttemptFire()
+
+    [Rpc(SendTo.Server)]
+    public override void AttemptFireRpc()
     {
-        if (!base.AttemptFire())
-            return false;
+        if (ammo <= 0)
+        {
+            canShoot = false;
+            return;
+        }
+        else if (elapsed < timeBetweenShots)
+        {
+            canShoot = false;
+            return;
+        }
+        else
+        {
+            GameObject b = Instantiate(bulletPrefab, gunBarrelEnd.transform.position, gunBarrelEnd.rotation);
+            b.GetComponent<Projectile>().Initialize(3, 100, 2, 0.0f, null); // version without special effect
+            b.GetComponent<NetworkObject>().Spawn();
+            // test
 
-        var b = Instantiate(bulletPrefab, gunBarrelEnd.transform.position, gunBarrelEnd.rotation);
-        b.GetComponent<Projectile>().Initialize(3, 100, 2, 0.0f, null); // version without special effect
-        //b.GetComponent<Projectile>().Initialize(1, 100, 2, 5, DoThing); // version with special effect
+            //anim.SetTrigger("shoot");
+            elapsed = 0;
+            ammo -= 1;
 
-        anim.SetTrigger("shoot");
-        elapsed = 0;
-        ammo -= 1;
+            canShoot = true;
+            print("Gun is able to shoot shooting now...");
+        }
 
-        return true;
+
     }
 
     // example function, make hit enemy fly upward

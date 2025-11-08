@@ -1,4 +1,6 @@
+using Mono.Cecil;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,7 +35,7 @@ public class Player_GunHandler : MonoBehaviour
         if (isShooting)
         {
 
-            currentGun?.AttemptFire();
+            currentGun?.AttemptFireRpc();
 
         }
 
