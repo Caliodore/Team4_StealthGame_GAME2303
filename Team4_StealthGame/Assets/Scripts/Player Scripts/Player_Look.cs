@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using Zhamanta;
 
 /****************** Summary of Player Movement ******************/
 
@@ -44,7 +44,7 @@ public class Player_Look : MonoBehaviour
     {
         //Look();
         Turning();
-        cursorLocation = attachedReticle.GetCursorLocation();
+        //cursorLocation = attachedReticle.GetCursorLocation();
     }
 
     void Look()
