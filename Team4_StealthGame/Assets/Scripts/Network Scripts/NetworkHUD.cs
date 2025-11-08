@@ -7,7 +7,7 @@ public class NetworkHUD : MonoBehaviour
     [SerializeField] GameObject HostButton;
     [SerializeField] GameObject JoinButton;
     [SerializeField] GameObject StartButton;
-    [SerializeField] GameObject uiCanvas;
+    //[SerializeField] GameObject uiCanvas;
     private void Start()
     {
         Time.timeScale = 0f;
@@ -32,7 +32,7 @@ public class NetworkHUD : MonoBehaviour
     public void StartBtnPress()
     {
         StartButton.SetActive(false);
-        uiCanvas.SetActive(true);
+        //uiCanvas.SetActive(true);
         Time.timeScale = 1f;
     }
 }

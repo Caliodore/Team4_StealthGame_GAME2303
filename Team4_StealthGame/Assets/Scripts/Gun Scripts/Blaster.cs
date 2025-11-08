@@ -12,23 +12,29 @@ public class Blaster : Gun
         if (ammo <= 0)
         {
             canShoot = false;
+            return;
         }
-
-        if (elapsed < timeBetweenShots)
+        else if (elapsed < timeBetweenShots)
         {
             canShoot = false;
+            return;
+        }
+        else
+        {
+            GameObject b = Instantiate(bulletPrefab, gunBarrelEnd.transform.position, gunBarrelEnd.rotation);
+            b.GetComponent<Projectile>().Initialize(3, 100, 2, 0.0f, null); // version without special effect
+            b.GetComponent<NetworkObject>().Spawn();
+            // test
+
+            //anim.SetTrigger("shoot");
+            elapsed = 0;
+            ammo -= 1;
+
+            canShoot = true;
+            print("Gun is able to shoot shooting now...");
         }
 
-        GameObject b = Instantiate(bulletPrefab, gunBarrelEnd.transform.position, gunBarrelEnd.rotation);
-        b.GetComponent<Projectile>().Initialize(3, 100, 2, 0.0f, null); // version without special effect
-        b.GetComponent<NetworkObject>().Spawn();
-        // test
 
-        //anim.SetTrigger("shoot");
-        elapsed = 0;
-        ammo -= 1;
-
-        canShoot = true;
     }
 
     // example function, make hit enemy fly upward

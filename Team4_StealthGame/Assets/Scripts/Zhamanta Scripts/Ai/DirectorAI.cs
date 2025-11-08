@@ -1,329 +1,310 @@
-using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
-using UnityEditor.Build.Content;
 using Cali;
-using Unity.VisualScripting;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
-using Zhamanta;
 
 // This script will trigger/call events from the LevelManager and the GuardManager depending on the alartness level and other minor events
 // No other script should call anything from this script
-public class DirectorAI : MonoBehaviour
+
+namespace Zhamanta
 {
-    [SerializeField] float alertnessRelaxationInterval = 7;
-    float relaxAlertnessElapsedTime = 0;
-    [SerializeField] bool firstLockdownDone = false;
-    private enum Alertness
+    public class DirectorAI : MonoBehaviour
     {
-        Stage1,
-        Stage2,
-        Alarm,
-        Lockdown
-    }
-    [SerializeField] private Alertness alertness;
-
-    private LevelManager levelManager;
-    private GuardManager guardManager;
-    private Zhamanta.UIManager uiManager;
-
-    [SerializeField] DirectorOptions directorOptions;
-    [SerializeField] PlayerStats playerStats;
-
-    private Dictionary<PlayerLogic, PlayerStats> playerDictionary = new Dictionary<PlayerLogic, PlayerStats>(); //Problem A: I need a similar dictionary for guards (each guard paired with its stats).  I think it can be created in the GuardManager with a public get and private set
-
-    public UnityEvent OnAlertnessStageChange;
-
-    private void Awake()
-    {
-        PlayerLogic[] players = FindObjectsByType<PlayerLogic>(FindObjectsSortMode.None);
-        foreach (PlayerLogic player in players)
+        [SerializeField] float alertnessRelaxationInterval = 7;
+        float relaxAlertnessElapsedTime = 0;
+        [SerializeField] bool firstLockdownDone = false;
+        private enum Alertness
         {
-            //playerDictionary.Add(player, player.playerStats); Problem E: PlayerLogic needs a serializable field that fetches its correcponding PlayerStats SO
+            Stage1,
+            Stage2,
+            Alarm,
+            Lockdown
+        }
+        [SerializeField] private Alertness alertness;
+
+        private LevelManager levelManager;
+        private GuardManager guardManager;
+        private Zhamanta.GlobalUI globalUI;
+
+        [SerializeField] DirectorOptions directorOptions;
+
+        private List<Player_Health> playerHealths = new List<Player_Health>();
+
+        public UnityEvent OnAlertnessStageChange;
+
+        private bool alarmOn;
+
+        private void Awake()
+        {
+            Player_Health[] players = FindObjectsByType<Player_Health>(FindObjectsSortMode.None);
+            playerHealths = new List<Player_Health>(players);
+
+            levelManager = FindFirstObjectByType<LevelManager>();
+            guardManager = FindFirstObjectByType<GuardManager>();
+            globalUI = FindFirstObjectByType<Zhamanta.GlobalUI>();
         }
 
-        levelManager = FindFirstObjectByType<LevelManager>(); 
-        guardManager = FindFirstObjectByType<GuardManager>();
-        uiManager = FindFirstObjectByType<Zhamanta.UIManager>();
-    }
+        private void Start()
+        {
+            alarmOn = false;
+            StageDeterminant();
+            StartCoroutine(CheckForSpecificBehavior());
+        }
 
-    private void Start()
-    {
-        StageDeterminant();
-        StartCoroutine(CheckForSpecificBehavior());
-    }
-
-    public void StageDeterminant()  //Call when alertnessL gets updated (when UpdateAlertnessLevel() is called) 
-    {
-        var alertnessL = AlertnessLevel.alertnessL;
-        if (alertnessL >= 0 && alertnessL < 25)
+        public void StageDeterminant()  //Call when alertnessL gets updated (when UpdateAlertnessLevel() is called) 
         {
-            alertness = Alertness.Stage1;
-            OnAlertnessStageChange.Invoke();
-        }
-        else if (alertnessL >= 25 && alertnessL < 50)
-        {
-            alertness = Alertness.Stage2;
-            OnAlertnessStageChange.Invoke();
-        }
-        else if (alertnessL >= 50 && alertnessL < 75)
-        {
-            alertness = Alertness.Alarm;
-            OnAlertnessStageChange.Invoke();
-        }
-        else if (alertnessL >= 75 && alertnessL < 100)
-        {
-            alertness = Alertness.Lockdown;
-            OnAlertnessStageChange.Invoke();
-            StartCoroutine(LockdownTimer());
-            if (firstLockdownDone == false)
+            var alertnessL = AlertnessLevel.alertnessL;
+            if (alertnessL >= 0 && alertnessL < 25)
             {
-                StartCoroutine(PermanentCheckOnPlayerLastKnown()); //Problem G
+                alertness = Alertness.Stage1;
+                OnAlertnessStageChange.Invoke();
             }
-            firstLockdownDone = true;
-        }
-        else if (alertnessL < 0 || alertnessL >= 100)
-        { 
-            print($"Alertness is out of range. Current Value: {alertnessL}");    
-        }
-    }
-
-    IEnumerator LockdownTimer()
-    {
-        levelManager.LockdownHandler(); //Lockdown activate. Does this handler make all doors lock? (Cali: Yes, it should. As doors are added to their dictionary in LevelManager, the toggleLockdown event also adds them as a listener.)
-
-        float playersHealthTotal = 0;
-
-        foreach (KeyValuePair<PlayerLogic, PlayerStats> pair in playerDictionary)
-        {
-            PlayerLogic player = pair.Key;
-            PlayerStats playerStats = pair.Value;
-
-            playersHealthTotal += playerStats.health;
-        }
-
-        float playersHealthAverage = playersHealthTotal / playerDictionary.Count;
-
-        if (playersHealthAverage <= 50)
-        {
-            yield return new WaitForSeconds(directorOptions.lockdownMinTime);
-            AlertnessLevel.UpdateAlertnessLevel(-26);
-            levelManager.LockdownHandler(); //Lockdown deactivate
-        }
-        else if (playersHealthAverage > 50)
-        {
-            yield return new WaitForSeconds(directorOptions.lockdownMaxTime);
-            AlertnessLevel.UpdateAlertnessLevel(-26);
-            levelManager.LockdownHandler(); //Lockdown deactivate
-        }
-    }
-
-    IEnumerator PermanentCheckOnPlayerLastKnown()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(15f);
-            //guardManager.GetNearestGuards(1, levelManager.playerLastKnownLocation); //Problem G: I don't understand the point of playerLastKnownLocation if I cannot get it because it is private
-        }
-    }
-
-    private void Update()
-    {
-        RelaxAlertness();
-        LightsBehavior();
-    }
-
-    public void LightsBehavior() 
-    {
-        // Problem C: I do not know why Cali has a getter for an AlarmActive bool in the GuardManager if I already have a stage for it. Please let me know if I am misinterpreting something!
-        // Cali: I was developing it on it's own, because I knew that the alarm would mostly be used by the GuardManager out of all the stuff I was working on. If you would prefer to centralize it here that is ok.
-        if (alertness == Alertness.Alarm)
-        {
-            uiManager.FlashingRed();
-        }
-        else if (alertness == Alertness.Lockdown)
-        {
-            uiManager.TurnOffLights();
-        }
-    }
-
-    public void RelaxAlertness()
-    {
-        if (guardManager.UnawareOfPlayers)
-        {
-            while (relaxAlertnessElapsedTime != alertnessRelaxationInterval)
+            else if (alertnessL >= 25 && alertnessL < 50)
             {
-                relaxAlertnessElapsedTime += Time.deltaTime;
+                alertness = Alertness.Stage2;
+                OnAlertnessStageChange.Invoke();
             }
-            if (relaxAlertnessElapsedTime == alertnessRelaxationInterval)
+            else if (alertnessL >= 50 && alertnessL < 75)
             {
-                AlertnessLevel.UpdateAlertnessLevel(-1);
-                relaxAlertnessElapsedTime = 0;
+                alertness = Alertness.Alarm;
+                OnAlertnessStageChange.Invoke();
+            }
+            else if (alertnessL >= 75 && alertnessL < 100)
+            {
+                alertness = Alertness.Lockdown;
+                OnAlertnessStageChange.Invoke();
+                StartCoroutine(LockdownTimer());
+                firstLockdownDone = true;
+            }
+            else if (alertnessL < 0 || alertnessL >= 100)
+            {
+                print($"Alertness is out of range. Current Value: {alertnessL}");
             }
         }
-    }
 
-    public void ChangeGuardSpeeds() //Called when invoking OnAlertnessStageChange
-    {
-        if (guardManager.SearchingForPlayers)
+        IEnumerator LockdownTimer()
         {
-            if (alertness == Alertness.Stage1 || alertness == Alertness.Stage2)
+            levelManager.LockdownHandler();
+
+            float playersHealthTotal = 0;
+
+            foreach (Player_Health ph in playerHealths)
             {
-                //Problem A
-                //Iterate through the guard dictionary to change their speed to the GuardStats SO original speed
+                playersHealthTotal += ph.health;
             }
-            else if (alertness == Alertness.Alarm)
+
+            float playersHealthAverage = playersHealthTotal / playerHealths.Count;
+
+            if (playersHealthAverage <= 50)
             {
-                //Problem A
-                //guardsSpeed *= directorOptions.guardSpeedAlarmMultiplier;
+                yield return new WaitForSeconds(directorOptions.lockdownMinTime);
+                AlertnessLevel.UpdateAlertnessLevel(-26);
+                levelManager.LockdownHandler(); //Lockdown deactivate
             }
-            else if (alertness == Alertness.Lockdown)
+            else if (playersHealthAverage > 50)
             {
-                //Problem A
-                //guardsSpeed *= directorOptions.guardSpeedLockdownMultiplier;
+                yield return new WaitForSeconds(directorOptions.lockdownMaxTime);
+                AlertnessLevel.UpdateAlertnessLevel(-26);
+                levelManager.LockdownHandler(); //Lockdown deactivate
             }
         }
-    }
 
-    public void NearestGuardsToPosition(Vector3 position) // The player/item that calls this needs to pass their position.
-    {
-        int numberOfGuards = guardManager.CurrentlyActiveGuards;
-
-        switch (alertness)
+        private void Update()
         {
-            case Alertness.Stage1:
-                guardManager.GetNearestGuards(1, position);
-                break;
-            case Alertness.Stage2:
-                guardManager.GetNearestGuards(2, position);
-                break;
-            case Alertness.Alarm:
-                guardManager.GetNearestGuards(3, position);
-                break;
-            case Alertness.Lockdown:
-                guardManager.GetNearestGuards(4, position);
-                break;
+            RelaxAlertness();
+            ActivateAlarmUI();
         }
-    }
 
-    private void SpecificGuardsToPositions() //Called every now and then through a coroutine that is started in Start()
-    {
-        // Currently, no way of accessing guards' stats (guards's health in this case), lack of GuardStats SO (Problem A)
-
-        /*GameObject guardWithMaxHealth = FindFirstObjectByType<GuardLogic>().health = 100;
-
-        if (levelManager.jewelStolen)
+        public void ActivateAlarmUI()
         {
-            guardManager.SendSpecificGuards(guardWithMaxHealth, levelManager.jewelPosition);
-        }*/
-
-        if (alertness == Alertness.Stage2)
-        {
-            foreach (KeyValuePair<PlayerLogic, PlayerStats> pair in playerDictionary)
+            if (alertness == Alertness.Alarm)
             {
-                PlayerLogic player = pair.Key;
-                PlayerStats playerStats = pair.Value;
+                globalUI.FlashingRed();
+            }
+        }
 
-                if (alertness == Alertness.Stage2 && playerStats.health == 100)
+        public void ActivateAlarm() //Called when invoking OnAlertnessStageChange
+        {
+            if (alertness == Alertness.Alarm)
+            {
+                alarmOn = true;
+                globalUI.AlarmSwitch(alarmOn);
+            }
+            else
+            {
+                alarmOn = false;
+            }
+        }
+
+        public void TurnLightsOff() //Called when invoking OnAlertnessStageChange
+        {
+            if (alertness == Alertness.Lockdown)
+            {
+                globalUI.TurnLightsOff();
+            }
+        }
+
+        public void RelaxAlertness()
+        {
+            if (guardManager.UnawareOfPlayers)
+            {
+                while (relaxAlertnessElapsedTime != alertnessRelaxationInterval)
                 {
-                    //Also send a few full health guards to player, but I need to access guard health somehow (Problem A)
+                    relaxAlertnessElapsedTime += Time.deltaTime;
+                }
+                if (relaxAlertnessElapsedTime == alertnessRelaxationInterval)
+                {
+                    AlertnessLevel.UpdateAlertnessLevel(-1);
+                    relaxAlertnessElapsedTime = 0;
                 }
             }
         }
-    }
 
-    IEnumerator CheckForSpecificBehavior()
-    {
-        while (true)
+        public void ChangeGuardSpeeds() //Called when invoking OnAlertnessStageChange
         {
-            yield return new WaitForSeconds(20f);
-            SpecificGuardsToPositions();
-        }
-    }
+            NavMeshAgent[] guards = FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None);
 
-
-    public void GuardAmountRegulator() //Call when alertnessL gets updated (when UpdateAlertnessLevel() is called).  Another option is to simply call it when invoking OnAlertnessStageChange  <<<Let me know which one/your thoughts
-    {
-        int numCurrentGuards = guardManager.CurrentlyActiveGuards;
-        int initialAddValue = GuardsToAdd();
-        int actualNumGuardsToAdd;
-
-        switch (alertness)
-        {
-            case Alertness.Stage1:
-                actualNumGuardsToAdd = GuardsToAdd();
-                if ((numCurrentGuards + actualNumGuardsToAdd) <= directorOptions.stage1MaxGuards)
+            if (guardManager.SearchingForPlayers)
+            {
+                if (alertness == Alertness.Stage1 || alertness == Alertness.Stage2)
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B: I think Cali wants me to use the UpdateGuardRefs to add guards actually, but I am not sure how.
-                    //Cali: The intention of the UpdateGuardRefs is for making sure the dictionary is up to date if guards are added/removed.
-                    //UpdateGuardRefs does not handle adding guards itself.
-
-                    //Maybe if I had the dictionary I am asking for in Problem A, then I could do...
-                    //List<GuardLogic> guardKeys = guardDictionary.Keys.ToList();
-                    /*for (int i = 0; i < actualNumGuardsToAdd; i++)
+                    foreach (NavMeshAgent agent in guards)
                     {
-                        guardManager.UpdateGuardRefs(guardKeys[i], true);
-                    }*/
-
-                    // Please let me know if the above for loop would be correct, close, or completely wrong
+                        agent.speed = 3.5f;
+                    }
                 }
-                break;
-            case Alertness.Stage2:
-                actualNumGuardsToAdd = GuardsToAdd() * 2;
-                if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.stage2MaxGuards))
+                else if (alertness == Alertness.Alarm)
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B
+                    foreach (NavMeshAgent agent in guards)
+                    {
+                        agent.speed *= directorOptions.guardSpeedAlarmMultiplier;
+                    }
                 }
-                break;
-            case Alertness.Alarm:
-                actualNumGuardsToAdd = GuardsToAdd() * 3;
-                if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.alarmMaxGuards))
+                else if (alertness == Alertness.Lockdown)
                 {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B
+                    foreach (NavMeshAgent agent in guards)
+                    {
+                        agent.speed *= directorOptions.guardSpeedLockdownMultiplier;
+                    }
                 }
-                break;
-            case Alertness.Lockdown:
-                actualNumGuardsToAdd = GuardsToAdd() * 4;
-                if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.lockdownMaxGuards))
-                {
-                    //guardManager.AddGuards(guardsToAdd);
-                    //Problem B
-                }
-                break;
+            }
         }
-    }
 
-    private int GuardsToAdd()
-    {
-        int numPlayersAlive = playerDictionary.Count;
-        int numGuardsToAdd = 0;
-
-        switch (numPlayersAlive)
+        public void NearestGuardsToPosition(Vector3 position) // CALL THIS.  The player/item that calls this needs to pass their position.
         {
-            case 1:
-                numGuardsToAdd = 1;
-                break;
-            case 2:
-                numGuardsToAdd = 2;
-                break;
-            case 3:
-                numGuardsToAdd = 3;
-                break;
-            case >= 4:
-                numGuardsToAdd = 4;
-                break;
+            int numberOfGuards = guardManager.CurrentlyActiveGuards;
+
+            switch (alertness)
+            {
+                case Alertness.Stage1:
+                    guardManager.GetNearestGuards(1, position);
+                    break;
+                case Alertness.Stage2:
+                    guardManager.GetNearestGuards(2, position);
+                    break;
+                case Alertness.Alarm:
+                    guardManager.GetNearestGuards(3, position);
+                    break;
+                case Alertness.Lockdown:
+                    guardManager.GetNearestGuards(4, position);
+                    break;
+            }
         }
 
-        return numGuardsToAdd;
-    }
+        private void SpecificGuardsToPositions()
+        {
+            if (alertness == Alertness.Stage2)
+            {
+                foreach (Player_Health ph in playerHealths)
+                {
 
-    public void RemovePlayer(PlayerLogic playerLogic) //Call through event (OnPlayerDeath or something similar)
-    {
-        playerDictionary.Remove(playerLogic);
-    }
+                    if (alertness == Alertness.Stage2 && ph.health == 100)
+                    {
+                        guardManager.GetNearestGuards(1, ph.gameObject.transform.position);
+                    }
+                }
+            }
+        }
 
-    //Problem F: I lack the creativity to think of a clever/fun way to use the SealUnsealRoom(GameObject roomRef, bool sealOrUnseal) and DoorStateUpdate(GameObject doorRef, DoorType changeToState) functions, help!
+        IEnumerator CheckForSpecificBehavior()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(20f);
+                SpecificGuardsToPositions();
+            }
+        }
+
+
+        public void GuardAmountRegulator() 
+        {
+            int numCurrentGuards = guardManager.CurrentlyActiveGuards;
+            int initialAddValue = GuardsToAdd();
+            int actualNumGuardsToAdd;
+
+            switch (alertness)
+            {
+                case Alertness.Stage1:
+                    actualNumGuardsToAdd = GuardsToAdd();
+                    if ((numCurrentGuards + actualNumGuardsToAdd) <= directorOptions.stage1MaxGuards)
+                    {
+                        guardManager.SpawnGuards(actualNumGuardsToAdd);
+                    }
+                    break;
+                case Alertness.Stage2:
+                    actualNumGuardsToAdd = GuardsToAdd() * 2;
+                    if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.stage2MaxGuards))
+                    {
+                        guardManager.SpawnGuards(actualNumGuardsToAdd);
+                    }
+                    break;
+                case Alertness.Alarm:
+                    actualNumGuardsToAdd = GuardsToAdd() * 3;
+                    if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.alarmMaxGuards))
+                    {
+                        guardManager.SpawnGuards(actualNumGuardsToAdd);
+                    }
+                    break;
+                case Alertness.Lockdown:
+                    actualNumGuardsToAdd = GuardsToAdd() * 4;
+                    if ((numCurrentGuards + actualNumGuardsToAdd) <= (directorOptions.lockdownMaxGuards))
+                    {
+                        guardManager.SpawnGuards(actualNumGuardsToAdd);
+                    }
+                    break;
+            }
+        }
+
+        private int GuardsToAdd()
+        {
+            int numPlayersAlive = playerHealths.Count;
+            int numGuardsToAdd = 0;
+
+            switch (numPlayersAlive)
+            {
+                case 1:
+                    numGuardsToAdd = 1;
+                    break;
+                case 2:
+                    numGuardsToAdd = 2;
+                    break;
+                case 3:
+                    numGuardsToAdd = 3;
+                    break;
+                case >= 4:
+                    numGuardsToAdd = 4;
+                    break;
+            }
+
+            return numGuardsToAdd;
+        }
+
+        public void RemovePlayerFromList(Player_Health playerHealth) //CALL THIS through event (OnPlayerDeath or something similar)
+        {
+            playerHealths.Remove(playerHealth);
+        }
+    }
 }
+
